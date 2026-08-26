@@ -1,5 +1,5 @@
 ---
-import { INTERESTS, CONNECTIONS, BACKGROUNDS, RESIDENCY, RESIDENCY_NONE, POSITION_GROUPS, MIN_AGE } from '../lib/registration';
+import { INTERESTS, CONNECTIONS, BACKGROUNDS, GENDERS, RESIDENCY, RESIDENCY_NONE, POSITION_GROUPS, MIN_AGE } from '../lib/registration';
 import { COUNTRIES } from '../lib/countries';
 
 const field = 'w-full rounded-lg border-2 border-ink-900/15 bg-white px-4 py-3 text-ink-900 transition placeholder:text-ink-400 focus:border-leone-500 focus:outline-none';
@@ -40,6 +40,14 @@ const err = 'mt-1 text-sm font-medium text-red-700';
         <input class={`${field} mt-2`} id="country" name="country" type="text" list="country-list"
                autocomplete="country-name" placeholder="Start typing…" required />
         <p class={err} data-error="country" hidden></p>
+      </div>
+      <div>
+        <label class={label} for="gender">Gender</label>
+        <select class={`${field} mt-2`} id="gender" name="gender" required>
+          <option value="">Choose one…</option>
+          {GENDERS.map((g) => <option value={g}>{g}</option>)}
+        </select>
+        <p class={err} data-error="gender" hidden></p>
       </div>
       <div>
         <label class={label} for="dateOfBirth">Date of birth</label>

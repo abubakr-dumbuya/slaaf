@@ -103,6 +103,7 @@ export const POST: APIRoute = async ({ request }) => {
     country: normaliseCountry(d.country) ?? d.country,
     dateOfBirth: d.dateOfBirth.toISOString().slice(0, 10),
     age,
+    gender: d.gender,
     isMinor: age < MINOR_AGE,
     guardianName: d.guardianName || '',
     guardianPhone: d.guardianPhone || '',

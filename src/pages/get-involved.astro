@@ -7,26 +7,27 @@ import RegistrationForm from '../components/RegistrationForm.astro';
 // Written once. Shown under the lede on mobile and tablet, and in the sidebar
 // from lg up, where there is a column to hold it.
 const whoCanRegister = [
-  "Anyone aged 15 or over with a connection to Sierra Leone — by birth, through a parent or grandparent, or otherwise — wherever in the world you live. You do not need to have played American football before. Athletes from football, athletics, basketball and rugby backgrounds are all part of how the game grows here.",
+  "Anyone aged 15 or over with a connection to Sierra Leone — by birth, through a parent or grandparent, or otherwise — wherever in the world you live. You do not need to have played American football before, or to be a player at all: coaches, officials and volunteers are as much a part of building the game as athletes are.",
   "If you are under 18, we will ask for a parent or guardian's details before you can take part.",
 ];
 
 ---
 <Base
-  title="Play for Salone"
-  description="Register your interest in playing, coaching, officiating or volunteering with the Sierra Leone Authority of American Football — open to Sierra Leoneans at home and anywhere in the world."
+  title="Get involved"
+  description="Play, coach, officiate or volunteer with the Sierra Leone Authority of American Football — open to Sierra Leoneans at home and anywhere in the world."
 >
   <PageHeader
-    title="Play for Salone"
-    lede="We are building Sierra Leone's national football programme from the ground up — and we are looking for players, coaches, officials and volunteers, at home and across the diaspora."
+    title="Get involved"
+    lede="We are building Sierra Leone's national football programme from the ground up — and we need players, coaches, officials and volunteers, at home and across the diaspora. There is a place here whether or not you ever step onto the field."
   >
     <div class="mt-6 max-w-2xl space-y-4">
       {whoCanRegister.map((para) => <p class="leading-relaxed text-ink-700">{para}</p>)}
     </div>
     <p class="mt-6 max-w-2xl leading-relaxed text-ink-700">
-      Registrations go onto SLAAF's athlete database, which is how we select for
-      combines, training sessions and, in time, national squads. We will be in
-      touch by email — so please use an address you check.
+      Registrations go onto SLAAF's database, which is how we select for
+      combines, training sessions and, in time, national squads, and how we find
+      coaches, officials and volunteers for events. We will be in touch by email
+      — so please use an address you check.
     </p>
   </PageHeader>
 

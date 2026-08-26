@@ -31,6 +31,8 @@ export const CONNECTIONS = [
   'No connection — I want to support the game',
 ] as const;
 
+export const GENDERS = ['Male', 'Female', 'Prefer not to say'] as const;
+
 export const RESIDENCY = [
   'No — Sierra Leone only',
   'Yes — citizen of another country',
@@ -71,6 +73,7 @@ export const registrationSchema = z
     phone: z.string().trim().max(40).optional().or(z.literal('')),
     country: z.string({ message: 'Please tell us where you live.' }).trim().min(2, 'Please tell us where you live.').max(80),
     dateOfBirth: z.coerce.date({ message: 'Please enter your date of birth.' }),
+    gender: z.enum(GENDERS, { message: 'Please choose one option.' }),
     connection: z.enum(CONNECTIONS, { message: 'Please choose one option.' }),
     residency: z.enum(RESIDENCY, { message: 'Please choose one option.' }),
     residencyCountry: z.string().trim().max(80).optional().or(z.literal('')),
@@ -170,6 +173,7 @@ export interface RegistrationPayload {
   country: string;
   dateOfBirth: string;
   age: number;
+  gender: string;
   isMinor: boolean;
   guardianName: string;
   guardianPhone: string;
@@ -216,6 +220,7 @@ function rows(p: RegistrationPayload): Array<[string, string]> {
     ['Phone', p.phone || '—'],
     ['Country', p.country],
     ['Date of birth', `${p.dateOfBirth} (age ${p.age})`],
+    ['Gender', p.gender],
   ];
   if (p.isMinor) {
     out.push(

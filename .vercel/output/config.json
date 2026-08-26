@@ -2,6 +2,13 @@
 	"version": 3,
 	"routes": [
 		{
+			"src": "^/play$",
+			"headers": {
+				"Location": "/get-involved"
+			},
+			"status": 301
+		},
+		{
 			"handle": "filesystem"
 		},
 		{

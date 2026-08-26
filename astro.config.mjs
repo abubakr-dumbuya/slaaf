@@ -10,6 +10,8 @@ export default defineConfig({
   // prerendering (the registration endpoint) run on demand.
   output: 'static',
   adapter: vercel(),
+  // /play was the original route for this page.
+  redirects: { '/play': '/get-involved' },
   integrations: [sitemap()],
   vite: { plugins: [tailwindcss()] },
 });
