@@ -2,8 +2,87 @@
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
 import Placeholder from '../components/Placeholder.astro';
+import { fetchCollection, collectionUrl, formatPrice, SHOP } from '../lib/shop';
+
+// Read live so price and stock changes in Shopify appear without a rebuild.
+export const prerender = false;
+
+const products = await fetchCollection();
+const shopUrl = collectionUrl(SHOP);
 ---
-<Base title="Support SLAAF" description="Donate to or partner with the Sierra Leone Authority of American Football and help build the game in Salone.">
-  <PageHeader title="Support SLAAF" lede="Equipment, travel and coaching all cost money. Here is how you can help." />
-  <Placeholder need="Needs from SLAAF: a decision on donation processing (Stripe or PayPal for international giving), sponsorship tiers and benefits, a sponsorship prospectus PDF, and the legal entity that will receive funds." />
+<Base
+  title="Support SLAAF"
+  description="Buy from the FAMBUL x SLAAF collection and support the Sierra Leone Authority of American Football — kit, equipment, coaching and travel for players at home and abroad."
+>
+  <PageHeader
+    title="Support SLAAF"
+    lede="Equipment, coaching and travel all cost money. Buying from the collection puts something behind the programme — and puts Salone on your back."
+  />
+
+  <section class="container-page py-16">
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <div>
+        <h2 class="text-3xl sm:text-4xl">The collection</h2>
+        <p class="prose-body mt-4 max-w-2xl">
+          Made with <a href={`https://${SHOP.domain}`} class="text-leone-700 underline"
+            target="_blank" rel="noopener noreferrer">FAMBUL</a>. Every item is
+          presale, with shipping expected in late 2026.
+        </p>
+      </div>
+      <a href={shopUrl} class="btn btn-ghost" target="_blank" rel="noopener noreferrer">
+        View the full collection
+      </a>
+    </div>
+
+    {products && products.length > 0 && (
+      <ul class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        {products.map((product) => (
+          <li>
+            <a href={product.url} class="group block" target="_blank" rel="noopener noreferrer">
+              {product.image && (
+                <div class="overflow-hidden rounded-2xl bg-sand-100">
+                  <img
+                    src={product.image.src}
+                    alt={product.title}
+                    width={product.image.width}
+                    height={product.image.height}
+                    loading="lazy"
+                    decoding="async"
+                    class="aspect-square w-full object-cover transition duration-300 group-hover:scale-[1.03]"
+                  />
+                </div>
+              )}
+              <h3 class="mt-4 text-lg transition group-hover:text-leone-600">{product.title}</h3>
+              <p class="mt-1 flex items-center gap-3">
+                <span class="type-label text-ink-800">{formatPrice(product.price, SHOP.currency)}</span>
+                {!product.available && <span class="type-label text-ink-400">Sold out</span>}
+              </p>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )}
+
+    {products && products.length === 0 && (
+      <p class="prose-body mt-10">
+        Nothing in the collection at the moment.
+        <a href={shopUrl} class="text-leone-700 underline" target="_blank" rel="noopener noreferrer">
+          Visit the shop</a> to see what else is available.
+      </p>
+    )}
+
+    {products === null && (
+      <p class="prose-body mt-10">
+        The shop could not be reached just now.
+        <a href={shopUrl} class="text-leone-700 underline" target="_blank" rel="noopener noreferrer">
+          Open the collection on FAMBUL</a> instead.
+      </p>
+    )}
+
+    <p class="mt-10 text-sm text-ink-500">
+      Purchases are handled by FAMBUL on Shopify. SLAAF never sees your card details.
+    </p>
+  </section>
+
+  <Placeholder need="Still to add to this page: direct donations, sponsorship tiers and a prospectus for partners, and confirmation of which legal entity receives funds. Also outstanding — what share of each sale reaches SLAAF, which is the first thing a supporter will want to know." />
 </Base>
