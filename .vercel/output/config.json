@@ -9,6 +9,13 @@
 			"status": 301
 		},
 		{
+			"src": "^/teams$",
+			"headers": {
+				"Location": "/events"
+			},
+			"status": 301
+		},
+		{
 			"handle": "filesystem"
 		},
 		{
@@ -28,6 +35,14 @@
 		},
 		{
 			"src": "^/api/register/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/events/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^/teams/?$",
 			"dest": "_render"
 		},
 		{

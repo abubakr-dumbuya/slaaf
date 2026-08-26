@@ -966,6 +966,9 @@ function renderAllHeadContent(result) {
 	content += result._metadata.extraHead.join("");
 	return markHTMLString(content);
 }
+function renderHead() {
+	return createRenderInstruction({ type: "head" });
+}
 function maybeRenderHead() {
 	return createRenderInstruction({ type: "maybe-head" });
 }
@@ -2326,4 +2329,4 @@ function spreadAttributes(values = {}, _name, { class: scopedClassName } = {}) {
 	return markHTMLString(output);
 }
 //#endregion
-export { decodeKey as A, DEFAULT_404_COMPONENT as C, fetchStateSymbol as D, clientAddressSymbol as E, generateCspDigest as M, originPathnameSymbol as O, ASTRO_GENERATOR as S, REROUTABLE_STATUS_CODES as T, renderEndpoint as _, chunkToString as a, isRoute500 as b, isRenderTemplateResult as c, addAttribute as d, isRenderInstruction as f, unescapeHTML as g, isAstroComponentFactory as h, renderComponent as i, decryptString as j, responseSentSymbol as k, renderTemplate as l, pushDirective as m, renderPage as n, createSlotValueFromString as o, normalizeCspResourceEntry as p, renderJSX as r, renderSlotToString as s, spreadAttributes as t, maybeRenderHead as u, createAstro as v, REDIRECT_STATUS_CODES as w, ASTRO_ERROR_HEADER as x, isRoute404 as y };
+export { originPathnameSymbol as A, ASTRO_ERROR_HEADER as C, REROUTABLE_STATUS_CODES as D, REDIRECT_STATUS_CODES as E, decodeKey as M, decryptString as N, clientAddressSymbol as O, generateCspDigest as P, isRoute500 as S, DEFAULT_404_COMPONENT as T, isAstroComponentFactory as _, chunkToString as a, createAstro as b, renderSlotToString as c, maybeRenderHead as d, renderHead as f, pushDirective as g, normalizeCspResourceEntry as h, renderComponent as i, responseSentSymbol as j, fetchStateSymbol as k, isRenderTemplateResult as l, isRenderInstruction as m, renderPage as n, createSlotValueFromString as o, addAttribute as p, renderJSX as r, renderSlot as s, spreadAttributes as t, renderTemplate as u, unescapeHTML as v, ASTRO_GENERATOR as w, isRoute404 as x, renderEndpoint as y };

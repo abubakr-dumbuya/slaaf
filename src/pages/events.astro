@@ -1,0 +1,80 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Placeholder from '../components/Placeholder.astro';
+import { fetchUpcoming, htmlUrl } from '../lib/calendar';
+
+// Read live so a newly added event appears without a rebuild.
+export const prerender = false;
+
+const calendarId = import.meta.env.GOOGLE_CALENDAR_ID;
+const feedUrl = import.meta.env.CALENDAR_ICS_URL;
+const events = calendarId ? await fetchUpcoming(calendarId, feedUrl) : null;
+
+const TZ = 'Africa/Freetown';
+const dayFmt = new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric', timeZone: TZ });
+const timeFmt = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: TZ });
+const monthFmt = new Intl.DateTimeFormat('en-GB', { month: 'short', timeZone: TZ });
+const dateFmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', timeZone: TZ });
+---
+<Base
+  title="Upcoming events"
+  description="Combines, trials, training sessions and fixtures from the Sierra Leone Authority of American Football."
+>
+  <PageHeader
+    title="Upcoming events"
+    lede="Combines, trials, training sessions and fixtures. All times are Freetown time."
+  />
+
+  <section class="container-page py-16">
+    {events && events.length > 0 && (
+      <ul class="space-y-px overflow-hidden rounded-2xl bg-ink-900/10">
+        {events.map((event) => (
+          <li class="bg-sand-100 p-6 sm:p-8">
+            <div class="flex flex-col gap-6 sm:flex-row sm:items-start">
+              <div class="flex shrink-0 flex-col items-center justify-center rounded-xl bg-ink-950 px-5 py-4 text-white sm:w-24">
+                <span class="type-label text-leone-400">{monthFmt.format(event.start)}</span>
+                <span class="type-numeral text-3xl leading-none">{dateFmt.format(event.start)}</span>
+              </div>
+
+              <div class="min-w-0">
+                <h2 class="text-2xl">{event.summary}</h2>
+                <p class="mt-2 text-ink-700">
+                  <time datetime={event.start.toISOString()}>{dayFmt.format(event.start)}</time>
+                  {!event.allDay && <span> · {timeFmt.format(event.start)}{event.end && ` – ${timeFmt.format(event.end)}`}</span>}
+                  {event.allDay && <span> · All day</span>}
+                </p>
+                {event.location && <p class="mt-1 text-ink-600">{event.location}</p>}
+                {event.description && (
+                  <p class="mt-4 whitespace-pre-line leading-relaxed text-ink-700">{event.description}</p>
+                )}
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    )}
+
+    {events && events.length === 0 && (
+      <p class="prose-body">
+        Nothing scheduled at the moment. Check back soon, or
+        <a href="/get-involved" class="text-leone-700 underline"> register your interest</a>
+        and we will let you know when the next event is announced.
+      </p>
+    )}
+
+    {calendarId && (
+      <a href={htmlUrl(calendarId)} class="btn btn-ghost mt-10" target="_blank" rel="noopener noreferrer">
+        Add to your calendar
+      </a>
+    )}
+  </section>
+
+  {!calendarId && (
+    <Placeholder need="No calendar is connected yet. Set GOOGLE_CALENDAR_ID to the ID of a public Google Calendar and events will appear here automatically — see README.md." />
+  )}
+
+  {calendarId && events === null && (
+    <Placeholder need="The calendar could not be read. Check that GOOGLE_CALENDAR_ID is correct and that the calendar is set to public." />
+  )}
+</Base>

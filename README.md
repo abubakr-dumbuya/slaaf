@@ -35,6 +35,15 @@ switches delivery to a JSON POST instead of email.
 With neither configured, `/api/register` returns 503 and `/play` shows a "not
 yet open" notice — the form never reports success for data it did not store.
 
+## Upcoming events
+
+`/events` reads a public Google Calendar's iCalendar feed and renders the
+events in the site's own design, rather than embedding Google's iframe. Set
+`GOOGLE_CALENDAR_ID` to the calendar's ID (Google Calendar → Settings →
+Integrate calendar → Calendar ID) and set the calendar's access permissions to
+public. The page is server-rendered, so a newly added event appears without a
+rebuild. With no calendar configured the page explains what is missing.
+
 ## Project layout
 
 ```
@@ -43,6 +52,7 @@ src/
   content/        news/ and fixtures/ Markdown — see CONTENT.md
   layouts/        Base.astro — <head>, SEO tags, structured data, chrome
   lib/            registration.ts — the registration schema and age rules
+                  calendar.ts — reads and parses the public calendar feed
   pages/          One file per route
   styles/         global.css — all design tokens
 ```
