@@ -1,5 +1,17 @@
 import type { APIRoute } from 'astro';
-import { registrationSchema, ageOn, MINOR_AGE } from '../../lib/registration';
+import {
+  registrationSchema,
+  ageOn,
+  MINOR_AGE,
+  emailSubject,
+  emailText,
+  emailHtml,
+  type RegistrationPayload,
+} from '../../lib/registration';
+
+/** Registrations go here unless overridden. */
+const DEFAULT_NOTIFY_EMAIL = 'info@slaaf.org';
+const DEFAULT_FROM = 'SLAAF Registrations <registrations@slaaf.org>';
 
 export const prerender = false;
 
@@ -14,7 +26,7 @@ export const prerender = false;
  *   SLAAF_WEBHOOK_URL  POST target (e.g. a Google Apps Script writing to a Sheet)
  *   RESEND_API_KEY     + SLAAF_NOTIFY_EMAIL to deliver by email
  */
-async function deliver(payload: Record<string, unknown>): Promise<boolean> {
+async function deliver(payload: RegistrationPayload): Promise<boolean> {
   const webhook = import.meta.env.SLAAF_WEBHOOK_URL;
   if (webhook) {
     const res = await fetch(webhook, {
@@ -27,20 +39,24 @@ async function deliver(payload: Record<string, unknown>): Promise<boolean> {
   }
 
   const key = import.meta.env.RESEND_API_KEY;
-  const to = import.meta.env.SLAAF_NOTIFY_EMAIL;
-  if (key && to) {
-    const lines = Object.entries(payload).map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`);
+  if (key) {
+    const to = import.meta.env.SLAAF_NOTIFY_EMAIL || DEFAULT_NOTIFY_EMAIL;
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json' },
       body: JSON.stringify({
-        from: 'SLAAF Registrations <noreply@slaaf.org>',
+        from: import.meta.env.SLAAF_FROM_EMAIL || DEFAULT_FROM,
         to: [to],
-        subject: `Registration: ${payload.fullName}`,
-        text: lines.join('\n'),
+        // So the board can answer the applicant straight from the inbox.
+        reply_to: payload.email,
+        subject: emailSubject(payload),
+        text: emailText(payload),
+        html: emailHtml(payload),
       }),
     });
-    if (!res.ok) throw new Error(`Resend responded ${res.status}`);
+    if (!res.ok) {
+      throw new Error(`Resend responded ${res.status}: ${await res.text().catch(() => '')}`);
+    }
     return true;
   }
 
@@ -78,7 +94,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   const d = parsed.data;
   const age = ageOn(d.dateOfBirth);
-  const payload = {
+  const payload: RegistrationPayload = {
     submittedAt: new Date().toISOString(),
     fullName: d.fullName,
     email: d.email,

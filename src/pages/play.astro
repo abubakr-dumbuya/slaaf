@@ -8,7 +8,7 @@ import RegistrationForm from '../components/RegistrationForm.astro';
 // than let visitors fill it in and hit an error, say so up front.
 const configured = Boolean(
   import.meta.env.SLAAF_WEBHOOK_URL ||
-    (import.meta.env.RESEND_API_KEY && import.meta.env.SLAAF_NOTIFY_EMAIL),
+    import.meta.env.RESEND_API_KEY,
 );
 ---
 <Base

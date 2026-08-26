@@ -23,10 +23,14 @@ npm run preview  # serve the built site
 
 ## Environment variables
 
-Player registrations need somewhere to go. Copy `.env.example` to `.env` and
-set **either** `SLAAF_WEBHOOK_URL` **or** both `RESEND_API_KEY` and
-`SLAAF_NOTIFY_EMAIL`. The same values must be set in the Vercel project for the
-deployed site.
+Player registrations are emailed to **info@slaaf.org**. The only required
+variable is `RESEND_API_KEY`; copy `.env.example` to `.env` and set it, and set
+the same value in the Vercel project for the deployed site.
+
+Sending requires the `slaaf.org` domain to be verified in Resend (SPF and DKIM
+records added to DNS), otherwise Resend rejects the send. `SLAAF_NOTIFY_EMAIL`
+and `SLAAF_FROM_EMAIL` override the recipient and sender; `SLAAF_WEBHOOK_URL`
+switches delivery to a JSON POST instead of email.
 
 With neither configured, `/api/register` returns 503 and `/play` shows a "not
 yet open" notice — the form never reports success for data it did not store.

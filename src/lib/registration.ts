@@ -89,3 +89,106 @@ export const registrationSchema = z
   });
 
 export type Registration = z.infer<typeof registrationSchema>;
+
+/** Everything the endpoint forwards on for one registration. */
+export interface RegistrationPayload {
+  submittedAt: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  country: string;
+  dateOfBirth: string;
+  age: number;
+  isMinor: boolean;
+  guardianName: string;
+  guardianEmail: string;
+  connection: string;
+  background: string;
+  interests: string[];
+  position: string;
+  experience: string;
+  filmUrl: string;
+}
+
+/**
+ * Subject lines are written to be scannable in a shared inbox: who, where,
+ * and — prefixed, because it changes who must be contacted first — whether
+ * the applicant is a child.
+ */
+export function emailSubject(p: RegistrationPayload): string {
+  const prefix = p.isMinor ? '[Under 18] ' : '';
+  return `${prefix}New registration: ${p.fullName} — ${p.country}`;
+}
+
+/** ISO timestamps are unreadable in an inbox. */
+function formatSubmitted(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.valueOf())) return iso;
+  return new Intl.DateTimeFormat('en-GB', {
+    day: 'numeric', month: 'long', year: 'numeric',
+    hour: '2-digit', minute: '2-digit', timeZone: 'UTC',
+  }).format(d) + ' UTC';
+}
+
+const escapeHtml = (v: string) =>
+  v.replace(/[&<>"']/g, (c) =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!,
+  );
+
+function rows(p: RegistrationPayload): Array<[string, string]> {
+  const out: Array<[string, string]> = [
+    ['Name', p.fullName],
+    ['Email', p.email],
+    ['Phone', p.phone || '—'],
+    ['Country', p.country],
+    ['Date of birth', `${p.dateOfBirth} (age ${p.age})`],
+  ];
+  if (p.isMinor) {
+    out.push(['Parent or guardian', p.guardianName], ['Guardian email', p.guardianEmail]);
+  }
+  out.push(
+    ['Connection to Sierra Leone', p.connection],
+    ['Sporting background', p.background],
+    ['Interested in', p.interests.join(', ')],
+    ['Position', p.position || '—'],
+    ['Experience', p.experience || '—'],
+    ['Highlight film', p.filmUrl || '—'],
+  );
+  return out;
+}
+
+export function emailText(p: RegistrationPayload): string {
+  const head = p.isMinor
+    ? 'This applicant is under 18. Contact the parent or guardian before any follow-up.\n\n'
+    : '';
+  return (
+    `${head}${rows(p)
+      .map(([k, v]) => `${k}: ${v}`)
+      .join('\n')}\n\nSubmitted ${formatSubmitted(p.submittedAt)}\nReply to this email to answer the applicant directly.`
+  );
+}
+
+export function emailHtml(p: RegistrationPayload): string {
+  const notice = p.isMinor
+    ? `<p style="margin:0 0 20px;padding:12px 16px;background:#eff8ff;border-left:4px solid #0072c6;color:#1e4472;font-size:14px">
+         <strong>This applicant is under 18.</strong> Contact the parent or guardian before any follow-up.
+       </p>`
+    : '';
+  const body = rows(p)
+    .map(
+      ([k, v]) => `<tr>
+        <td style="padding:8px 16px 8px 0;color:#57564d;font-size:13px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;vertical-align:top">${escapeHtml(k)}</td>
+        <td style="padding:8px 0;color:#1f2119;font-size:15px">${escapeHtml(v)}</td>
+      </tr>`,
+    )
+    .join('');
+  return `<div style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;max-width:640px;margin:0 auto;padding:24px">
+    <h1 style="margin:0 0 4px;font-size:20px;color:#1f2119">New registration</h1>
+    <p style="margin:0 0 20px;color:#6f6e63;font-size:14px">Sierra Leone Authority of American Football</p>
+    ${notice}
+    <table style="border-collapse:collapse;width:100%">${body}</table>
+    <p style="margin:24px 0 0;color:#8a897e;font-size:12px">
+      Submitted ${escapeHtml(formatSubmitted(p.submittedAt))}. Reply to this email to answer the applicant directly.
+    </p>
+  </div>`;
+}
