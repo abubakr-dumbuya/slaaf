@@ -90,9 +90,12 @@ export function normaliseDescription(raw: string): string {
   let text = raw;
 
   // Keep an <a>'s href when its label is just the same URL or generic text.
+  const bareUrl = (v: string) => v.replace(/^https?:\/\//i, '').replace(/^www\./i, '').replace(/\/$/, '').toLowerCase();
   text = text.replace(/<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi, (_m, href, label) => {
     const clean = String(label).replace(/<[^>]+>/g, '').trim();
-    return !clean || clean === href ? href : `${clean} (${href})`;
+    // "www.fambul.com" linking to "http://www.fambul.com" is one thing, not two.
+    if (!clean || bareUrl(clean) === bareUrl(href)) return href;
+    return `${clean} (${href})`;
   });
 
   text = text
@@ -128,8 +131,15 @@ export function linkify(text: string): Array<{ text: string; href?: string }> {
   return out;
 }
 
+/** The calendar's default zone, declared once at the top of the feed. */
+export function calendarTimeZone(raw: string): string | null {
+  const match = /^X-WR-TIMEZONE:(.+)$/im.exec(raw.replace(/\r\n/g, '\n'));
+  return match ? match[1].trim() : null;
+}
+
 export function parseIcs(raw: string): CalendarEvent[] {
   const events: CalendarEvent[] = [];
+  const defaultTz = calendarTimeZone(raw);
   let current: Record<string, string> | null = null;
 
   for (const line of unfold(raw)) {
@@ -139,7 +149,7 @@ export function parseIcs(raw: string): CalendarEvent[] {
     }
     if (line === 'END:VEVENT') {
       if (current) {
-        const tz = current.DTSTART_TZID ?? null;
+        const tz = current.DTSTART_TZID ?? defaultTz;
         const start = current.DTSTART ? parseDate(current.DTSTART, tz) : null;
         if (start && current.SUMMARY) {
           const end = current.DTEND ? parseDate(current.DTEND, current.DTEND_TZID ?? tz) : null;
