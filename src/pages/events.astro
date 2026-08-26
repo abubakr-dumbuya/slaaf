@@ -7,15 +7,32 @@ import { fetchUpcoming, htmlUrl } from '../lib/calendar';
 // Read live so a newly added event appears without a rebuild.
 export const prerender = false;
 
-const calendarId = import.meta.env.GOOGLE_CALENDAR_ID;
+// SLAAF's public calendar. Public calendar IDs are not secrets — they appear
+// in every embed URL — so this is a default rather than a required env var.
+const DEFAULT_CALENDAR_ID =
+  'd70c6bb1623ca7cce65ebaa41ac643e3ebed78265bae6e9a7618684894aa6e86@group.calendar.google.com';
+
+const calendarId = import.meta.env.GOOGLE_CALENDAR_ID || DEFAULT_CALENDAR_ID;
 const feedUrl = import.meta.env.CALENDAR_ICS_URL;
 const events = calendarId ? await fetchUpcoming(calendarId, feedUrl) : null;
 
-const TZ = 'Africa/Freetown';
-const dayFmt = new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric', timeZone: TZ });
-const timeFmt = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: TZ });
-const monthFmt = new Intl.DateTimeFormat('en-GB', { month: 'short', timeZone: TZ });
-const dateFmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', timeZone: TZ });
+// Events span Freetown, Europe and the US, so each is shown in the zone it was
+// scheduled in — an event at 20:30 in Seattle should read 20:30, not 03:30.
+const FALLBACK_TZ = 'Africa/Freetown';
+const zoneOf = (event: { timeZone: string | null }) => event.timeZone ?? FALLBACK_TZ;
+
+const fmt = (timeZone: string, options: Intl.DateTimeFormatOptions) =>
+  new Intl.DateTimeFormat('en-GB', { ...options, timeZone });
+
+const dayFmt = (tz: string) => fmt(tz, { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' });
+const timeFmt = (tz: string) => fmt(tz, { hour: '2-digit', minute: '2-digit' });
+const zoneFmt = (tz: string) => fmt(tz, { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' });
+const monthFmt = (tz: string) => fmt(tz, { month: 'short' });
+const dateFmt = (tz: string) => fmt(tz, { day: 'numeric' });
+
+/** "GMT", "PDT" — the trailing token of a short-zone format. */
+const zoneLabel = (date: Date, tz: string) =>
+  zoneFmt(tz).formatToParts(date).find((p) => p.type === 'timeZoneName')?.value ?? '';
 ---
 <Base
   title="Upcoming events"
@@ -23,7 +40,7 @@ const dateFmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', timeZone: TZ 
 >
   <PageHeader
     title="Upcoming events"
-    lede="Combines, trials, training sessions and fixtures. All times are Freetown time."
+    lede="Everything coming up — combines, trials, fixtures and gatherings. Each event is shown in its own local time."
   />
 
   <section class="container-page py-16">
@@ -33,15 +50,21 @@ const dateFmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', timeZone: TZ 
           <li class="bg-sand-100 p-6 sm:p-8">
             <div class="flex flex-col gap-6 sm:flex-row sm:items-start">
               <div class="flex shrink-0 flex-col items-center justify-center rounded-xl bg-ink-950 px-5 py-4 text-white sm:w-24">
-                <span class="type-label text-leone-400">{monthFmt.format(event.start)}</span>
-                <span class="type-numeral text-3xl leading-none">{dateFmt.format(event.start)}</span>
+                <span class="type-label text-leone-400">{monthFmt(zoneOf(event)).format(event.start)}</span>
+                <span class="type-numeral text-3xl leading-none">{dateFmt(zoneOf(event)).format(event.start)}</span>
               </div>
 
               <div class="min-w-0">
                 <h2 class="text-2xl">{event.summary}</h2>
                 <p class="mt-2 text-ink-700">
-                  <time datetime={event.start.toISOString()}>{dayFmt.format(event.start)}</time>
-                  {!event.allDay && <span> · {timeFmt.format(event.start)}{event.end && ` – ${timeFmt.format(event.end)}`}</span>}
+                  <time datetime={event.start.toISOString()}>{dayFmt(zoneOf(event)).format(event.start)}</time>
+                  {!event.allDay && (
+                    <span>
+                      {' · '}{timeFmt(zoneOf(event)).format(event.start)}
+                      {event.end && ` – ${timeFmt(zoneOf(event)).format(event.end)}`}
+                      {' '}<span class="text-ink-500">{zoneLabel(event.start, zoneOf(event))}</span>
+                    </span>
+                  )}
                   {event.allDay && <span> · All day</span>}
                 </p>
                 {event.location && <p class="mt-1 text-ink-600">{event.location}</p>}

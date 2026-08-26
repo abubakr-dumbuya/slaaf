@@ -10,8 +10,35 @@ export interface CalendarEvent {
   start: Date;
   end: Date | null;
   allDay: boolean;
+  /** IANA zone the event was authored in, when the feed states one. */
+  timeZone: string | null;
   location: string;
   description: string;
+}
+
+/** Offset, in ms, of `tz` from UTC at a given instant. */
+function tzOffsetAt(utcMs: number, tz: string): number {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz, hour12: false,
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+  }).formatToParts(new Date(utcMs));
+  const p: Record<string, string> = {};
+  for (const part of parts) p[part.type] = part.value;
+  const asIfUtc = Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour % 24, +p.minute, +p.second);
+  return asIfUtc - utcMs;
+}
+
+/**
+ * A DTSTART carrying a TZID is wall-clock time in that zone, not UTC. Convert
+ * by guessing, measuring the zone's offset at that guess, and correcting —
+ * twice, so instants near a DST boundary land on the right side of it.
+ */
+function zonedToUtc(fields: number[], tz: string): Date {
+  const [y, mo, d, h, mi, sec] = fields;
+  let ms = Date.UTC(y, mo - 1, d, h, mi, sec);
+  for (let i = 0; i < 2; i++) ms = Date.UTC(y, mo - 1, d, h, mi, sec) - tzOffsetAt(ms, tz);
+  return new Date(ms);
 }
 
 export function icsUrl(calendarId: string): string {
@@ -32,7 +59,7 @@ function unescapeText(v: string): string {
 }
 
 /** DTSTART:20260904T183000Z, DTSTART;TZID=…:20260904T183000, DTSTART;VALUE=DATE:20260904 */
-function parseDate(value: string): { date: Date; allDay: boolean } | null {
+function parseDate(value: string, tzid: string | null): { date: Date; allDay: boolean } | null {
   const dateOnly = /^(\d{4})(\d{2})(\d{2})$/.exec(value);
   if (dateOnly) {
     const [, y, m, d] = dateOnly;
@@ -40,7 +67,15 @@ function parseDate(value: string): { date: Date; allDay: boolean } | null {
   }
   const dt = /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})(Z?)$/.exec(value);
   if (!dt) return null;
-  const [, y, m, d, hh, mm, ss] = dt;
+  const [, y, m, d, hh, mm, ss, z] = dt;
+  const fields = [+y, +m, +d, +hh, +mm, +ss];
+  if (!z && tzid) {
+    try {
+      return { date: zonedToUtc(fields, tzid), allDay: false };
+    } catch {
+      // Unknown zone — fall through and treat as UTC.
+    }
+  }
   return { date: new Date(Date.UTC(+y, +m - 1, +d, +hh, +mm, +ss)), allDay: false };
 }
 
@@ -55,15 +90,17 @@ export function parseIcs(raw: string): CalendarEvent[] {
     }
     if (line === 'END:VEVENT') {
       if (current) {
-        const start = current.DTSTART ? parseDate(current.DTSTART) : null;
+        const tz = current.DTSTART_TZID ?? null;
+        const start = current.DTSTART ? parseDate(current.DTSTART, tz) : null;
         if (start && current.SUMMARY) {
-          const end = current.DTEND ? parseDate(current.DTEND) : null;
+          const end = current.DTEND ? parseDate(current.DTEND, current.DTEND_TZID ?? tz) : null;
           events.push({
             uid: current.UID ?? `${current.SUMMARY}-${current.DTSTART}`,
             summary: unescapeText(current.SUMMARY),
             start: start.date,
             end: end?.date ?? null,
             allDay: start.allDay,
+            timeZone: tz,
             location: unescapeText(current.LOCATION ?? ''),
             description: unescapeText(current.DESCRIPTION ?? ''),
           });
@@ -76,9 +113,11 @@ export function parseIcs(raw: string): CalendarEvent[] {
 
     const colon = line.indexOf(':');
     if (colon === -1) continue;
-    // Strip any parameters: "DTSTART;TZID=Africa/Freetown" -> "DTSTART"
-    const name = line.slice(0, colon).split(';')[0].toUpperCase();
+    const rawName = line.slice(0, colon);
+    const name = rawName.split(';')[0].toUpperCase();
     current[name] = line.slice(colon + 1);
+    const tzid = /;TZID=([^;:]+)/i.exec(rawName);
+    if (tzid) current[`${name}_TZID`] = tzid[1];
   }
   return events;
 }
