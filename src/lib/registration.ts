@@ -1,4 +1,25 @@
 import { z } from 'zod';
+import { normaliseCountry } from './countries';
+
+/**
+ * Grouped so the select can use optgroups. Covers both codes SLAAF governs:
+ * some are flag-specific (rusher, blitzer), some tackle-specific (offensive
+ * and defensive line), and the rest are common to both.
+ */
+export const POSITION_GROUPS = [
+  {
+    label: 'Offence',
+    options: ['Quarterback', 'Running back', 'Wide receiver', 'Tight end', 'Centre', 'Offensive line'],
+  },
+  {
+    label: 'Defence',
+    options: ['Rusher', 'Blitzer', 'Defensive line', 'Linebacker', 'Cornerback', 'Safety'],
+  },
+  { label: 'Special teams', options: ['Kicker', 'Punter', 'Returner'] },
+  { label: 'Other', options: ['Not sure yet', 'Coach or official, not a player'] },
+] as const;
+
+export const POSITIONS = POSITION_GROUPS.flatMap((g) => g.options as readonly string[]);
 
 export const INTERESTS = ['Playing', 'Coaching', 'Officiating', 'Volunteering'] as const;
 
@@ -56,6 +77,7 @@ export const registrationSchema = z
     background: z.enum(BACKGROUNDS, { message: 'Please choose one option.' }),
     interests: z.array(z.enum(INTERESTS)).min(1, 'Please choose at least one.'),
     position: z.string().trim().max(120).optional().or(z.literal('')),
+
     experience: z.string().trim().max(2000).optional().or(z.literal('')),
     filmUrl: z.url('That does not look like a valid link.').max(500).optional().or(z.literal('')),
     guardianName: z.string().trim().max(120).optional().or(z.literal('')),
@@ -107,6 +129,32 @@ export const registrationSchema = z
         code: 'custom',
         path: ['residencyCountry'],
         message: 'Please tell us which country.',
+      });
+      return;
+    }
+  })
+  .superRefine((data, ctx) => {
+    // The country inputs are searchable rather than true selects, so the
+    // server is what actually constrains them to the ISO list.
+    if (data.country && !normaliseCountry(data.country)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['country'],
+        message: 'Please choose a country from the list.',
+      });
+    }
+    if (data.residencyCountry && !normaliseCountry(data.residencyCountry)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['residencyCountry'],
+        message: 'Please choose a country from the list.',
+      });
+    }
+    if (data.position && !POSITIONS.includes(data.position)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['position'],
+        message: 'Please choose a position from the list.',
       });
     }
   });

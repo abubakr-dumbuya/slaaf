@@ -1,10 +1,15 @@
 ---
-import { INTERESTS, CONNECTIONS, BACKGROUNDS, RESIDENCY, RESIDENCY_NONE, MIN_AGE } from '../lib/registration';
+import { INTERESTS, CONNECTIONS, BACKGROUNDS, RESIDENCY, RESIDENCY_NONE, POSITION_GROUPS, MIN_AGE } from '../lib/registration';
+import { COUNTRIES } from '../lib/countries';
 
 const field = 'w-full rounded-lg border-2 border-ink-900/15 bg-white px-4 py-3 text-ink-900 transition placeholder:text-ink-400 focus:border-leone-500 focus:outline-none';
 const label = 'block font-display text-sm font-bold uppercase tracking-wide text-ink-800';
 const err = 'mt-1 text-sm font-medium text-red-700';
 ---
+<datalist id="country-list">
+  {COUNTRIES.map((c) => <option value={c}></option>)}
+</datalist>
+
 <form id="registration" method="POST" action="/api/register" novalidate class="mt-10 space-y-8">
   <!-- Honeypot: hidden from people, irresistible to bots. -->
   <div class="absolute left-[-9999px]" aria-hidden="true">
@@ -32,7 +37,8 @@ const err = 'mt-1 text-sm font-medium text-red-700';
       </div>
       <div>
         <label class={label} for="country">Country where you live</label>
-        <input class={`${field} mt-2`} id="country" name="country" type="text" autocomplete="country-name" required />
+        <input class={`${field} mt-2`} id="country" name="country" type="text" list="country-list"
+               autocomplete="country-name" placeholder="Start typing…" required />
         <p class={err} data-error="country" hidden></p>
       </div>
       <div>
@@ -46,9 +52,11 @@ const err = 'mt-1 text-sm font-medium text-red-700';
   </fieldset>
 
   <!-- Revealed only when the date of birth indicates the applicant is under 18. -->
-  <fieldset id="guardian" hidden class="space-y-6 rounded-xl border-2 border-atlantic-600/30 bg-atlantic-50 p-6">
-    <legend class="font-display text-xl font-black uppercase tracking-tight">Parent or guardian</legend>
-    <p class="text-ink-700">
+  <fieldset id="guardian" hidden class="rounded-xl border-2 border-atlantic-600/30 bg-atlantic-50 p-6">
+    <legend class="float-left mb-4 w-full font-display text-xl font-black uppercase tracking-tight">
+      Parent or guardian
+    </legend>
+    <p class="mb-6 text-ink-700">
       Because you are under 18, we need a parent or guardian on the record before
       you can take part.
     </p>
@@ -94,7 +102,8 @@ const err = 'mt-1 text-sm font-medium text-red-700';
 
       <div id="residency-country-wrap" hidden>
         <label class={label} for="residencyCountry">Which country?</label>
-        <input class={`${field} mt-2`} id="residencyCountry" name="residencyCountry" type="text" autocomplete="off" />
+        <input class={`${field} mt-2`} id="residencyCountry" name="residencyCountry" type="text"
+               list="country-list" autocomplete="off" placeholder="Start typing…" />
         <p class={err} data-error="residencyCountry" hidden></p>
       </div>
 
@@ -123,7 +132,15 @@ const err = 'mt-1 text-sm font-medium text-red-700';
 
     <div>
       <label class={label} for="position">Position you play <span class="font-normal normal-case text-ink-500">(optional)</span></label>
-      <input class={`${field} mt-2`} id="position" name="position" type="text" placeholder="Quarterback, rusher, safety…" />
+      <select class={`${field} mt-2`} id="position" name="position">
+        <option value="">Choose one…</option>
+        {POSITION_GROUPS.map((group) => (
+          <optgroup label={group.label}>
+            {group.options.map((o) => <option value={o}>{o}</option>)}
+          </optgroup>
+        ))}
+      </select>
+      <p class={err} data-error="position" hidden></p>
     </div>
 
     <div>

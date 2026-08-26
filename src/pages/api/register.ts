@@ -8,6 +8,7 @@ import {
   emailHtml,
   type RegistrationPayload,
 } from '../../lib/registration';
+import { normaliseCountry } from '../../lib/countries';
 
 /** Registrations go here unless overridden. */
 const DEFAULT_NOTIFY_EMAIL = 'info@slaaf.org';
@@ -99,7 +100,7 @@ export const POST: APIRoute = async ({ request }) => {
     fullName: d.fullName,
     email: d.email,
     phone: d.phone || '',
-    country: d.country,
+    country: normaliseCountry(d.country) ?? d.country,
     dateOfBirth: d.dateOfBirth.toISOString().slice(0, 10),
     age,
     isMinor: age < MINOR_AGE,
@@ -108,7 +109,7 @@ export const POST: APIRoute = async ({ request }) => {
     guardianEmail: d.guardianEmail || '',
     connection: d.connection,
     residency: d.residency,
-    residencyCountry: d.residencyCountry || '',
+    residencyCountry: d.residencyCountry ? (normaliseCountry(d.residencyCountry) ?? d.residencyCountry) : '',
     background: d.background,
     interests: d.interests,
     position: d.position || '',
