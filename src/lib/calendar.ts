@@ -75,6 +75,59 @@ function parseDate(value: string, tzid: string | null): { date: Date; allDay: bo
   return { date: new Date(Date.UTC(+y, +m - 1, +d, +hh, +mm, +ss)), allDay: false };
 }
 
+const ENTITIES: Record<string, string> = {
+  amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ', '#39': "'", '#x27': "'",
+};
+
+/**
+ * Google Calendar descriptions are often HTML — <p>, <br>, <a href>, entities.
+ * Rendering that raw would both look wrong and inject markup from a feed, so it
+ * is flattened to text with paragraph breaks preserved. Links survive as their
+ * URLs, which linkify() turns back into anchors at render time.
+ */
+export function normaliseDescription(raw: string): string {
+  if (!raw) return '';
+  let text = raw;
+
+  // Keep an <a>'s href when its label is just the same URL or generic text.
+  text = text.replace(/<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi, (_m, href, label) => {
+    const clean = String(label).replace(/<[^>]+>/g, '').trim();
+    return !clean || clean === href ? href : `${clean} (${href})`;
+  });
+
+  text = text
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/(p|div|li|tr|h[1-6])>/gi, '\n')
+    .replace(/<li\b[^>]*>/gi, '• ')
+    .replace(/<[^>]+>/g, '');
+
+  text = text.replace(/&(#x?[0-9a-f]+|[a-z]+);/gi, (m, ref: string) => {
+    const key = ref.toLowerCase();
+    if (key in ENTITIES) return ENTITIES[key];
+    if (key.startsWith('#x')) return String.fromCodePoint(parseInt(key.slice(2), 16));
+    if (key.startsWith('#')) return String.fromCodePoint(parseInt(key.slice(1), 10));
+    return m;
+  });
+
+  // Collapse the runs of blank lines that stripping tags tends to leave.
+  return text.replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+}
+
+/** Splits text into plain runs and URLs, so a template can render anchors. */
+export function linkify(text: string): Array<{ text: string; href?: string }> {
+  const out: Array<{ text: string; href?: string }> = [];
+  const pattern = /https?:\/\/[^\s<>()]+[^\s<>().,;:!?'"]/g;
+  let last = 0;
+  for (const match of text.matchAll(pattern)) {
+    const index = match.index ?? 0;
+    if (index > last) out.push({ text: text.slice(last, index) });
+    out.push({ text: match[0], href: match[0] });
+    last = index + match[0].length;
+  }
+  if (last < text.length) out.push({ text: text.slice(last) });
+  return out;
+}
+
 export function parseIcs(raw: string): CalendarEvent[] {
   const events: CalendarEvent[] = [];
   let current: Record<string, string> | null = null;
@@ -98,7 +151,7 @@ export function parseIcs(raw: string): CalendarEvent[] {
             allDay: start.allDay,
             timeZone: tz,
             location: unescapeText(current.LOCATION ?? ''),
-            description: unescapeText(current.DESCRIPTION ?? ''),
+            description: normaliseDescription(unescapeText(current.DESCRIPTION ?? '')),
           });
         }
       }

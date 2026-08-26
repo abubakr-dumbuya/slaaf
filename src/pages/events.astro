@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
 import Placeholder from '../components/Placeholder.astro';
-import { fetchUpcoming } from '../lib/calendar';
+import { fetchUpcoming, linkify } from '../lib/calendar';
 
 // Read live so a newly added event appears without a rebuild.
 export const prerender = false;
@@ -69,7 +69,16 @@ const zoneLabel = (date: Date, tz: string) =>
                 </p>
                 {event.location && <p class="mt-1 text-ink-600">{event.location}</p>}
                 {event.description && (
-                  <p class="mt-4 whitespace-pre-line leading-relaxed text-ink-700">{event.description}</p>
+                  <p class="mt-4 whitespace-pre-line leading-relaxed text-ink-700">
+                    {linkify(event.description).map((part) =>
+                      part.href ? (
+                        <a href={part.href} class="text-leone-700 underline break-words"
+                           target="_blank" rel="noopener noreferrer">{part.text}</a>
+                      ) : (
+                        part.text
+                      ),
+                    )}
+                  </p>
                 )}
               </div>
             </div>
