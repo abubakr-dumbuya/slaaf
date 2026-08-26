@@ -78,9 +78,9 @@
   .container-page {
     @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
   }
-  /* Small condensed green label, as used on the holding page header. */
-  .eyebrow {
-    @apply font-display text-xs font-bold uppercase tracking-[0.14em] text-leone-600;
+  /* Small condensed label for dates and metadata. */
+  .meta {
+    @apply font-display text-xs font-bold uppercase tracking-[0.14em] text-ink-500;
     font-stretch: 85%;
   }
   .prose-body {
