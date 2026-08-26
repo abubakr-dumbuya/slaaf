@@ -6,5 +6,6 @@ const { title, lede } = Astro.props;
   <div class="container-page py-16 sm:py-20">
     <h1 class="text-4xl sm:text-6xl">{title}</h1>
     {lede && <p class="prose-body mt-6 max-w-2xl">{lede}</p>}
+    <slot />
   </div>
 </section>
