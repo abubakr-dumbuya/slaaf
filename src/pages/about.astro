@@ -2,8 +2,165 @@
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
 import Placeholder from '../components/Placeholder.astro';
+
+// Sourced from the SLAAF Constitution (2025, amended 28 January 2026), the
+// Executive Board Charter, and the Register of Current Executive Board
+// Members. The Constitution itself is deliberately not published.
+const objectives = [
+  'Govern and regulate American football nationwide.',
+  'Develop grassroots, school, university, community and elite pathways.',
+  'Promote gender equity, inclusion of persons with disabilities, and youth participation.',
+  'Train, license and certify coaches, referees, officials and administrators.',
+  'Organise national leagues, competitions, clinics and development programmes.',
+  'Represent Sierra Leone in regional and international American football bodies.',
+  'Safeguard athlete welfare, integrity and ethical conduct.',
+  'Build strategic partnerships to advance the sport.',
+];
+
+const values = [
+  'Integrity and fair play',
+  'Transparency and accountability',
+  'Inclusion and equal opportunity',
+  'Athlete-centred development',
+  'Democratic governance',
+  'Compliance with national and international sports standards',
+];
+
+const executive = [
+  { name: 'Hafsatu Kamara, OLY', role: 'Chairperson' },
+  { name: 'Mohamed Turay', role: 'President' },
+  { name: 'AbuBakr Dumbuya', role: 'Vice-President' },
+  { name: 'Clifford Kamara', role: 'General Secretary' },
+  { name: 'Musu Konteh', role: 'Treasurer' },
+];
+
+const advisory = ['Thierno Diallo', 'Sylvester Renner'];
+
+const bodies = [
+  { name: 'General Assembly', body: 'The supreme authority of SLAAF. It elects the Executive Board, approves budgets and audited accounts, and amends the Constitution. It meets annually.' },
+  { name: 'Executive Board', body: 'Governs SLAAF between General Assemblies and is accountable to the Assembly. It meets at least quarterly and decides by majority vote.' },
+  { name: 'Standing Committees', body: 'Technical & Coaching, Development & Grassroots, and Events & Competitions.' },
+  { name: 'Advisory Board', body: 'Provides counsel to the Executive Board on strategy and the development of the sport.' },
+  { name: 'Judiciary Committee', body: 'An independent body responsible for discipline and dispute resolution.' },
+  { name: "Athletes' Commission", body: 'Represents the interests and welfare of athletes within the federation.' },
+];
 ---
-<Base title="About SLAAF" description="The Sierra Leone Authority of American Football is the national governing body for tackle and flag football in Sierra Leone.">
-  <PageHeader title="About SLAAF" lede="Who we are, how we are governed, and what we are building." />
-  <Placeholder need="Needs from SLAAF: founding date and legal status, mission statement, board and staff list with roles and photos, any national or international affiliations, and the organisation's constitution or bylaws if they are to be published." />
+<Base
+  title="About SLAAF"
+  description="The Sierra Leone Authority of American Football is the sole governing body for flag and tackle football in Sierra Leone — a non-profit, non-political sports federation recognised under Sierra Leonean law."
+>
+  <PageHeader
+    title="About SLAAF"
+    lede="The Sierra Leone Authority of American Football is the sole governing authority for American football — flag and tackle — in Sierra Leone. We are a non-profit, non-political sports federation recognised under the laws of Sierra Leone."
+  />
+
+  <!-- Mission & vision -->
+  <section class="container-page py-20">
+    <div class="grid gap-12 lg:grid-cols-2">
+      <div class="border-t-4 border-leone-500 pt-6">
+        <h2 class="text-2xl">Our mission</h2>
+        <p class="prose-body mt-4">
+          To develop, promote and govern American football in Sierra Leone as a
+          tool for youth empowerment, education, health, leadership and national
+          pride.
+        </p>
+      </div>
+      <div class="border-t-4 border-atlantic-600 pt-6">
+        <h2 class="text-2xl">Our vision</h2>
+        <p class="prose-body mt-4">
+          To build a sustainable, inclusive and internationally respected
+          American football ecosystem that creates opportunities from grassroots
+          to elite levels.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Objectives -->
+  <section class="border-y border-ink-900/10 bg-sand-100">
+    <div class="container-page py-20">
+      <h2 class="text-3xl sm:text-4xl">What we exist to do</h2>
+      <ol class="mt-12 grid gap-x-12 gap-y-8 sm:grid-cols-2">
+        {objectives.map((o, i) => (
+          <li class="flex gap-4">
+            <span class="font-display text-2xl font-black text-leone-500/40" aria-hidden="true">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <span class="pt-1 leading-relaxed text-ink-700">{o}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- Values -->
+  <section class="bg-ink-950 text-sand-100">
+    <div class="container-page py-20">
+      <h2 class="text-3xl sm:text-4xl">What guides us</h2>
+      <ul class="mt-10 flex flex-wrap gap-3">
+        {values.map((v) => (
+          <li class="rounded-full border border-white/20 px-5 py-2 font-display text-sm font-bold uppercase tracking-wide">
+            {v}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Governance -->
+  <section id="governance" class="container-page scroll-mt-24 py-20">
+    <div class="max-w-2xl">
+      <h2 class="text-3xl sm:text-4xl">How we are governed</h2>
+      <p class="prose-body mt-6">
+        SLAAF is governed by a Constitution adopted by its General Assembly and
+        most recently amended on 28 January 2026. Executive Board members serve
+        four-year terms and are elected in free, fair and transparent elections.
+        Amendments to the Constitution require a two-thirds majority of the
+        General Assembly.
+      </p>
+      <p class="prose-body mt-4">
+        The federation operates in compliance with the National Sports
+        Authority, the Ministry of Sports, and applicable international
+        federation statutes. Where national law conflicts with our own rules,
+        national law prevails.
+      </p>
+    </div>
+
+    <dl class="mt-14 grid gap-x-12 gap-y-10 md:grid-cols-2 lg:grid-cols-3">
+      {bodies.map((b) => (
+        <div class="border-t-2 border-ink-900/15 pt-5">
+          <dt class="font-display text-lg font-black uppercase tracking-tight">{b.name}</dt>
+          <dd class="mt-2 leading-relaxed text-ink-700">{b.body}</dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+
+  <!-- Leadership -->
+  <section class="border-t border-ink-900/10 bg-sand-100">
+    <div class="container-page py-20">
+      <h2 class="text-3xl sm:text-4xl">Executive Board</h2>
+      <p class="mt-4 text-ink-600">Term 2025&ndash;2029</p>
+
+      <ul class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        {executive.map((p) => (
+          <li class="border-t-4 border-leone-500 pt-5">
+            <p class="font-display text-xl font-black uppercase tracking-tight">{p.name}</p>
+            <p class="mt-1 text-ink-600">{p.role}</p>
+          </li>
+        ))}
+      </ul>
+
+      <h2 class="mt-20 text-3xl sm:text-4xl">Advisory Board</h2>
+      <ul class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        {advisory.map((name) => (
+          <li class="border-t-4 border-atlantic-600 pt-5">
+            <p class="font-display text-xl font-black uppercase tracking-tight">{name}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <Placeholder need="Still needed for this page: the date SLAAF was founded, portrait photographs of board members, and confirmation of any international federation membership (nothing on this page claims IFAF affiliation, because no source document establishes it)." />
 </Base>
