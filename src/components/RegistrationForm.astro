@@ -100,10 +100,13 @@ const err = 'mt-1 text-sm font-medium text-red-700';
         <p class={err} data-error="residency" hidden></p>
       </div>
 
-      <div id="residency-country-wrap" hidden>
+      <div id="residency-country-wrap" class="opacity-50 transition-opacity">
         <label class={label} for="residencyCountry">Which country?</label>
-        <input class={`${field} mt-2`} id="residencyCountry" name="residencyCountry" type="text"
-               list="country-list" autocomplete="off" placeholder="Start typing…" />
+        <input
+          class={`${field} mt-2 disabled:cursor-not-allowed disabled:border-ink-900/10 disabled:bg-sand-100 disabled:text-ink-400`}
+          id="residencyCountry" name="residencyCountry" type="text" list="country-list"
+          autocomplete="off" placeholder="Start typing…" disabled
+        />
         <p class={err} data-error="residencyCountry" hidden></p>
       </div>
 
@@ -144,7 +147,7 @@ const err = 'mt-1 text-sm font-medium text-red-700';
     </div>
 
     <div class="max-w-3xl">
-      <label class={label} for="experience">Playing experience <span class="font-normal normal-case text-ink-500">(optional)</span></label>
+      <label class={label} for="experience">Prior experience <span class="font-normal normal-case text-ink-500">(optional)</span></label>
       <textarea class={`${field} mt-2`} id="experience" name="experience" rows="4"
                 placeholder="Teams, leagues, school or college programmes, years played…"></textarea>
     </div>
@@ -178,6 +181,20 @@ const err = 'mt-1 text-sm font-medium text-red-700';
   <p class="text-sm font-medium text-red-700" data-error="form" hidden></p>
 </form>
 
+<dialog
+  id="missing-fields"
+  class="w-[min(92vw,32rem)] rounded-2xl border-2 border-ink-900/15 bg-white p-0 text-ink-900 backdrop:bg-ink-950/50"
+>
+  <div class="p-7">
+    <h2 class="text-2xl">Some details are missing</h2>
+    <p class="mt-3 text-ink-700">Please fill these in before sending your registration:</p>
+    <ul id="missing-fields-list" class="mt-5 space-y-2"></ul>
+    <button type="button" class="btn btn-primary mt-7 w-full" data-close-missing>
+      Back to the form
+    </button>
+  </div>
+</dialog>
+
 <div id="registration-success" hidden class="mt-10 rounded-xl border-2 border-leone-500 bg-leone-50 p-8">
   <h2 class="text-2xl">Thank you — we have your registration.</h2>
   <p class="prose-body mt-3">
@@ -194,6 +211,31 @@ const err = 'mt-1 text-sm font-medium text-red-700';
     const dob = form.querySelector<HTMLInputElement>('#dateOfBirth')!;
     const status = form.querySelector<HTMLElement>('[data-status]')!;
     const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+
+    const dialog = document.getElementById('missing-fields') as HTMLDialogElement;
+    const dialogList = document.getElementById('missing-fields-list')!;
+    dialog
+      .querySelector('[data-close-missing]')!
+      .addEventListener('click', () => dialog.close());
+
+    /**
+     * Field names mean nothing to a person, so the popup lists the labels they
+     * actually saw. Read from the DOM where a label exists so the two cannot
+     * drift, with a fallback for controls that have no `for` target.
+     */
+    const FALLBACK_LABELS: Record<string, string> = {
+      interests: 'What you are interested in',
+      consent: 'Consent to hold your details',
+      form: 'Something went wrong',
+    };
+    const labelFor = (key: string): string => {
+      const el = form.querySelector<HTMLLabelElement>(`label[for="${CSS.escape(key)}"]`);
+      if (el) {
+        // Drop the "(optional)" suffix and collapse whitespace.
+        return el.textContent!.replace(/\(optional\)/i, '').replace(/\s+/g, ' ').trim();
+      }
+      return FALLBACK_LABELS[key] ?? key;
+    };
 
     const clearErrors = () =>
       form.querySelectorAll<HTMLElement>('[data-error]').forEach((el) => {
@@ -214,6 +256,26 @@ const err = 'mt-1 text-sm font-medium text-red-700';
       (first as HTMLInputElement | null)?.focus?.();
     };
 
+    const showMissingDialog = (errors: Record<string, string>) => {
+      dialogList.replaceChildren(
+        ...Object.entries(errors).map(([key, message]) => {
+          const li = document.createElement('li');
+          li.className = 'flex gap-3 text-ink-800';
+          const dot = document.createElement('span');
+          dot.className = 'mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-leone-500';
+          dot.setAttribute('aria-hidden', 'true');
+          const text = document.createElement('span');
+          const name = document.createElement('strong');
+          name.className = 'font-display uppercase tracking-wide';
+          name.textContent = labelFor(key);
+          text.append(name, document.createTextNode(` — ${message}`));
+          li.append(dot, text);
+          return li;
+        }),
+      );
+      dialog.showModal();
+    };
+
     // Reveal the guardian block as soon as the date of birth says under 18.
     const syncGuardian = () => {
       const value = dob.valueAsDate;
@@ -230,8 +292,13 @@ const err = 'mt-1 text-sm font-medium text-red-700';
     const residency = form.querySelector<HTMLSelectElement>('#residency')!;
     const residencyWrap = document.getElementById('residency-country-wrap') as HTMLElement;
     const NONE = residency.dataset.none;
+    const residencyCountry = form.querySelector<HTMLInputElement>('#residencyCountry')!;
     const syncResidency = () => {
-      residencyWrap.hidden = residency.value === '' || residency.value === NONE;
+      const applies = residency.value !== '' && residency.value !== NONE;
+      residencyCountry.disabled = !applies;
+      residencyWrap.classList.toggle('opacity-50', !applies);
+      // Do not leave a stale country behind when the answer changes back.
+      if (!applies) residencyCountry.value = '';
     };
     residency.addEventListener('change', syncResidency);
     syncResidency();
@@ -257,8 +324,12 @@ const err = 'mt-1 text-sm font-medium text-red-700';
           return;
         }
         status.textContent = '';
-        if (data.errors) showErrors(data.errors);
-        else showErrors({ form: data.message ?? 'Something went wrong. Please try again.' });
+        if (data.errors) {
+          showMissingDialog(data.errors);
+          dialog.addEventListener('close', () => showErrors(data.errors), { once: true });
+        } else {
+          showErrors({ form: data.message ?? 'Something went wrong. Please try again.' });
+        }
       } catch {
         status.textContent = '';
         showErrors({ form: 'We could not reach the server. Please check your connection and try again.' });
