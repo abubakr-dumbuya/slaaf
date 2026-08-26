@@ -10,6 +10,16 @@ export const CONNECTIONS = [
   'No connection — I want to support the game',
 ] as const;
 
+export const RESIDENCY = [
+  'No — Sierra Leone only',
+  'Yes — citizen of another country',
+  'Yes — legal resident of another country',
+  'Yes — both citizen and legal resident',
+] as const;
+
+/** The option that means no country outside Sierra Leone applies. */
+export const RESIDENCY_NONE = RESIDENCY[0];
+
 export const BACKGROUNDS = [
   'American football (tackle)',
   'Flag football',
@@ -41,12 +51,15 @@ export const registrationSchema = z
     country: z.string({ message: 'Please tell us where you live.' }).trim().min(2, 'Please tell us where you live.').max(80),
     dateOfBirth: z.coerce.date({ message: 'Please enter your date of birth.' }),
     connection: z.enum(CONNECTIONS, { message: 'Please choose one option.' }),
+    residency: z.enum(RESIDENCY, { message: 'Please choose one option.' }),
+    residencyCountry: z.string().trim().max(80).optional().or(z.literal('')),
     background: z.enum(BACKGROUNDS, { message: 'Please choose one option.' }),
     interests: z.array(z.enum(INTERESTS)).min(1, 'Please choose at least one.'),
     position: z.string().trim().max(120).optional().or(z.literal('')),
     experience: z.string().trim().max(2000).optional().or(z.literal('')),
     filmUrl: z.url('That does not look like a valid link.').max(500).optional().or(z.literal('')),
     guardianName: z.string().trim().max(120).optional().or(z.literal('')),
+    guardianPhone: z.string().trim().max(40).optional().or(z.literal('')),
     guardianEmail: z.email('Please enter a valid email address.').max(200).optional().or(z.literal('')),
     consent: z.literal('on', { message: 'We need your consent to hold these details.' }),
     // Honeypot: a real person never sees this field, so anything in it is a bot.
@@ -69,7 +82,7 @@ export const registrationSchema = z
       ctx.addIssue({ code: 'custom', path: ['dateOfBirth'], message: 'Please check this date.' });
       return;
     }
-    // Under-18s need a parent or guardian on the record.
+    // Under-18s need a contactable parent or guardian on the record.
     if (age < MINOR_AGE) {
       if (!data.guardianName) {
         ctx.addIssue({
@@ -78,13 +91,23 @@ export const registrationSchema = z
           message: 'Under 18s need a parent or guardian named here.',
         });
       }
-      if (!data.guardianEmail) {
+      if (!data.guardianPhone) {
         ctx.addIssue({
           code: 'custom',
-          path: ['guardianEmail'],
-          message: 'Please give a parent or guardian email address.',
+          path: ['guardianPhone'],
+          message: 'Please give a parent or guardian phone number.',
         });
       }
+    }
+  })
+  .superRefine((data, ctx) => {
+    // Naming a country outside Sierra Leone only makes sense if one applies.
+    if (data.residency !== RESIDENCY_NONE && !data.residencyCountry) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['residencyCountry'],
+        message: 'Please tell us which country.',
+      });
     }
   });
 
@@ -101,8 +124,11 @@ export interface RegistrationPayload {
   age: number;
   isMinor: boolean;
   guardianName: string;
+  guardianPhone: string;
   guardianEmail: string;
   connection: string;
+  residency: string;
+  residencyCountry: string;
   background: string;
   interests: string[];
   position: string;
@@ -144,10 +170,15 @@ function rows(p: RegistrationPayload): Array<[string, string]> {
     ['Date of birth', `${p.dateOfBirth} (age ${p.age})`],
   ];
   if (p.isMinor) {
-    out.push(['Parent or guardian', p.guardianName], ['Guardian email', p.guardianEmail]);
+    out.push(
+      ['Parent or guardian', p.guardianName],
+      ['Guardian phone', p.guardianPhone],
+      ['Guardian email', p.guardianEmail || '—'],
+    );
   }
   out.push(
     ['Connection to Sierra Leone', p.connection],
+    ['Citizenship / residency outside SL', p.residencyCountry ? `${p.residency} (${p.residencyCountry})` : p.residency],
     ['Sporting background', p.background],
     ['Interested in', p.interests.join(', ')],
     ['Position', p.position || '—'],
