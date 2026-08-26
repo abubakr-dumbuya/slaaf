@@ -11,12 +11,6 @@ const whoCanRegister = [
   "If you are under 18, we will ask for a parent or guardian's details before you can take part.",
 ];
 
-// The form cannot store anything until a destination is configured. Rather
-// than let visitors fill it in and hit an error, say so up front.
-const configured = Boolean(
-  import.meta.env.SLAAF_WEBHOOK_URL ||
-    import.meta.env.RESEND_API_KEY,
-);
 ---
 <Base
   title="Play for Salone"
@@ -44,13 +38,6 @@ const configured = Boolean(
       we can contact you as programmes, camps and trials are scheduled.
     </p>
 
-    {!configured && (
-      <p class="mt-8 max-w-2xl rounded-xl border-2 border-amber-500/50 bg-amber-50 p-5 text-amber-900">
-        <strong class="font-display uppercase tracking-wide">Not yet open.</strong>{' '}
-        Registration is not accepting submissions yet — this form is here for
-        review. Please check back shortly.
-      </p>
-    )}
 
     <RegistrationForm />
   </section>

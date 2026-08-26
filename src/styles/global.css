@@ -53,6 +53,8 @@
   --color-ink-950: #14150f;
 
   --font-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  /* One width for every piece of display type on the site. */
+  --display-stretch: 92%;
   --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
@@ -66,7 +68,7 @@
   }
   h1, h2, h3, h4 {
     @apply font-display font-black uppercase tracking-tight text-balance;
-    font-stretch: 92%;
+    font-stretch: var(--display-stretch);
   }
   /* Visible focus — federation sites get accessibility-audited. */
   :focus-visible {
@@ -78,17 +80,46 @@
   .container-page {
     @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
   }
-  /* Small condensed label for dates and metadata. */
-  .meta {
-    @apply font-display text-xs font-bold uppercase tracking-[0.14em] text-ink-500;
-    font-stretch: 85%;
+  /* ---------------------------------------------------------------
+     Three display-type roles. Everything uppercase on the site uses
+     one of these rather than assembling its own combination, so
+     weight, size and tracking stay consistent between components.
+     --------------------------------------------------------------- */
+
+  /* Small label: dates, table headings, section kickers. */
+  .type-label {
+    @apply font-display text-xs font-bold uppercase tracking-[0.14em];
+    font-stretch: var(--display-stretch);
+  }
+
+  /* Controls: navigation, buttons, form labels, chips. */
+  .type-control {
+    @apply font-display text-sm font-bold uppercase tracking-wide;
+    font-stretch: var(--display-stretch);
+  }
+
+  /* Large figures: step numbers, statistics, the 404. Not uppercased,
+     since digits have no case. Size is set by the caller. */
+  .type-numeral {
+    @apply font-display font-black;
+    font-stretch: var(--display-stretch);
+  }
+
+  /* Titles that are not h1–h4: legends, definition terms, names.
+     Size is set by the caller. */
+  .type-title {
+    @apply font-display font-black uppercase tracking-tight;
+    font-stretch: var(--display-stretch);
   }
   .prose-body {
     @apply text-lg leading-relaxed text-ink-700;
   }
+  /* Matches .type-control — Tailwind v4 cannot @apply a component class
+     defined in the same layer, so the declarations are repeated. */
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3
-           font-display text-sm font-bold uppercase tracking-wider transition;
+           font-display text-sm font-bold uppercase tracking-wide transition;
+    font-stretch: var(--display-stretch);
   }
   /* Modifiers are composed in markup: class="btn btn-primary" */
   .btn-primary {
