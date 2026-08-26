@@ -1,0 +1,224 @@
+---
+import { INTERESTS, CONNECTIONS, BACKGROUNDS, MIN_AGE } from '../lib/registration';
+
+const field = 'w-full rounded-lg border-2 border-ink-900/15 bg-white px-4 py-3 text-ink-900 transition placeholder:text-ink-400 focus:border-leone-500 focus:outline-none';
+const label = 'block font-display text-sm font-bold uppercase tracking-wide text-ink-800';
+const err = 'mt-1 text-sm font-medium text-red-700';
+---
+<form id="registration" method="POST" action="/api/register" novalidate class="mt-10 space-y-8">
+  <!-- Honeypot: hidden from people, irresistible to bots. -->
+  <div class="absolute left-[-9999px]" aria-hidden="true">
+    <label>Website<input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+  </div>
+
+  <fieldset class="space-y-6">
+    <legend class="font-display text-xl font-black uppercase tracking-tight">About you</legend>
+
+    <div class="grid gap-6 sm:grid-cols-2">
+      <div>
+        <label class={label} for="fullName">Full name</label>
+        <input class={`${field} mt-2`} id="fullName" name="fullName" type="text" autocomplete="name" required />
+        <p class={err} data-error="fullName" hidden></p>
+      </div>
+      <div>
+        <label class={label} for="email">Email</label>
+        <input class={`${field} mt-2`} id="email" name="email" type="email" autocomplete="email" required />
+        <p class={err} data-error="email" hidden></p>
+      </div>
+      <div>
+        <label class={label} for="phone">Phone or WhatsApp <span class="font-normal normal-case text-ink-500">(optional)</span></label>
+        <input class={`${field} mt-2`} id="phone" name="phone" type="tel" autocomplete="tel" />
+        <p class={err} data-error="phone" hidden></p>
+      </div>
+      <div>
+        <label class={label} for="country">Country where you live</label>
+        <input class={`${field} mt-2`} id="country" name="country" type="text" autocomplete="country-name" required />
+        <p class={err} data-error="country" hidden></p>
+      </div>
+      <div>
+        <label class={label} for="dateOfBirth">Date of birth</label>
+        <input class={`${field} mt-2`} id="dateOfBirth" name="dateOfBirth" type="date" required
+               aria-describedby="dob-help" />
+        <p id="dob-help" class="mt-1 text-sm text-ink-500">You must be at least {MIN_AGE} to register.</p>
+        <p class={err} data-error="dateOfBirth" hidden></p>
+      </div>
+    </div>
+  </fieldset>
+
+  <!-- Revealed only when the date of birth indicates the applicant is under 18. -->
+  <fieldset id="guardian" hidden class="space-y-6 rounded-xl border-2 border-atlantic-600/30 bg-atlantic-50 p-6">
+    <legend class="font-display text-xl font-black uppercase tracking-tight">Parent or guardian</legend>
+    <p class="text-ink-700">
+      Because you are under 18, we need a parent or guardian on the record before
+      you can take part.
+    </p>
+    <div class="grid gap-6 sm:grid-cols-2">
+      <div>
+        <label class={label} for="guardianName">Parent or guardian name</label>
+        <input class={`${field} mt-2`} id="guardianName" name="guardianName" type="text" />
+        <p class={err} data-error="guardianName" hidden></p>
+      </div>
+      <div>
+        <label class={label} for="guardianEmail">Their email</label>
+        <input class={`${field} mt-2`} id="guardianEmail" name="guardianEmail" type="email" />
+        <p class={err} data-error="guardianEmail" hidden></p>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset class="space-y-6">
+    <legend class="font-display text-xl font-black uppercase tracking-tight">Your connection and background</legend>
+
+    <div class="grid gap-6 sm:grid-cols-2">
+      <div>
+        <label class={label} for="connection">Connection to Sierra Leone</label>
+        <select class={`${field} mt-2`} id="connection" name="connection" required>
+          <option value="">Choose one…</option>
+          {CONNECTIONS.map((c) => <option value={c}>{c}</option>)}
+        </select>
+        <p class={err} data-error="connection" hidden></p>
+      </div>
+      <div>
+        <label class={label} for="background">Main sporting background</label>
+        <select class={`${field} mt-2`} id="background" name="background" required>
+          <option value="">Choose one…</option>
+          {BACKGROUNDS.map((b) => <option value={b}>{b}</option>)}
+        </select>
+        <p class={err} data-error="background" hidden></p>
+      </div>
+    </div>
+
+    <div>
+      <span class={label}>I am interested in</span>
+      <div class="mt-3 flex flex-wrap gap-3">
+        {INTERESTS.map((i) => (
+          <label class="flex cursor-pointer items-center gap-2 rounded-full border-2 border-ink-900/15 bg-white px-4 py-2 transition has-[:checked]:border-leone-500 has-[:checked]:bg-leone-50">
+            <input type="checkbox" name="interests" value={i} class="accent-leone-600" />
+            <span class="font-display text-sm font-bold uppercase tracking-wide">{i}</span>
+          </label>
+        ))}
+      </div>
+      <p class={err} data-error="interests" hidden></p>
+    </div>
+
+    <div>
+      <label class={label} for="position">Position you play <span class="font-normal normal-case text-ink-500">(optional)</span></label>
+      <input class={`${field} mt-2`} id="position" name="position" type="text" placeholder="Quarterback, rusher, safety…" />
+    </div>
+
+    <div>
+      <label class={label} for="experience">Playing experience <span class="font-normal normal-case text-ink-500">(optional)</span></label>
+      <textarea class={`${field} mt-2`} id="experience" name="experience" rows="4"
+                placeholder="Teams, leagues, school or college programmes, years played…"></textarea>
+    </div>
+
+    <div>
+      <label class={label} for="filmUrl">Link to highlight film <span class="font-normal normal-case text-ink-500">(optional)</span></label>
+      <input class={`${field} mt-2`} id="filmUrl" name="filmUrl" type="url" placeholder="https://…"
+             aria-describedby="film-help" />
+      <p id="film-help" class="mt-1 text-sm text-ink-500">A YouTube, Hudl or Drive link. Please do not attach video files.</p>
+      <p class={err} data-error="filmUrl" hidden></p>
+    </div>
+  </fieldset>
+
+  <div class="rounded-xl bg-sand-100 p-6">
+    <label class="flex cursor-pointer items-start gap-3">
+      <input type="checkbox" name="consent" id="consent" class="mt-1 h-5 w-5 shrink-0 accent-leone-600" required />
+      <span class="text-ink-700">
+        I agree that SLAAF may hold these details in order to contact me about
+        playing, coaching, officiating or volunteering. I can ask for my details
+        to be removed at any time.
+      </span>
+    </label>
+    <p class={err} data-error="consent" hidden></p>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-4">
+    <button type="submit" class="btn btn-primary" data-submit>Send my registration</button>
+    <p class="text-sm text-ink-500" data-status role="status" aria-live="polite"></p>
+  </div>
+
+  <p class="text-sm font-medium text-red-700" data-error="form" hidden></p>
+</form>
+
+<div id="registration-success" hidden class="mt-10 rounded-xl border-2 border-leone-500 bg-leone-50 p-8">
+  <h2 class="text-2xl">Thank you — we have your registration.</h2>
+  <p class="prose-body mt-3">
+    Someone from SLAAF will be in touch. Keep an eye on your inbox, and check
+    your spam folder if you do not hear from us.
+  </p>
+</div>
+
+<script>
+  const form = document.getElementById('registration') as HTMLFormElement | null;
+  const success = document.getElementById('registration-success');
+  if (form && success) {
+    const guardian = document.getElementById('guardian') as HTMLFieldSetElement;
+    const dob = form.querySelector<HTMLInputElement>('#dateOfBirth')!;
+    const status = form.querySelector<HTMLElement>('[data-status]')!;
+    const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+
+    const clearErrors = () =>
+      form.querySelectorAll<HTMLElement>('[data-error]').forEach((el) => {
+        el.hidden = true;
+        el.textContent = '';
+      });
+
+    const showErrors = (errors: Record<string, string>) => {
+      let first: HTMLElement | null = null;
+      for (const [key, message] of Object.entries(errors)) {
+        const el = form.querySelector<HTMLElement>(`[data-error="${key}"]`);
+        if (!el) continue;
+        el.textContent = message;
+        el.hidden = false;
+        first ??= form.querySelector<HTMLElement>(`#${CSS.escape(key)}`) ?? el;
+      }
+      first?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      (first as HTMLInputElement | null)?.focus?.();
+    };
+
+    // Reveal the guardian block as soon as the date of birth says under 18.
+    const syncGuardian = () => {
+      const value = dob.valueAsDate;
+      if (!value) return;
+      const now = new Date();
+      let age = now.getFullYear() - value.getFullYear();
+      const m = now.getMonth() - value.getMonth();
+      if (m < 0 || (m === 0 && now.getDate() < value.getDate())) age--;
+      guardian.hidden = !(age >= 0 && age < 18);
+    };
+    dob.addEventListener('change', syncGuardian);
+    syncGuardian();
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      clearErrors();
+      submit.disabled = true;
+      status.textContent = 'Sending…';
+
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { accept: 'application/json' },
+        });
+        const data = await res.json().catch(() => ({}));
+
+        if (res.ok && data.ok) {
+          form.hidden = true;
+          success.hidden = false;
+          success.scrollIntoView({ block: 'center', behavior: 'smooth' });
+          return;
+        }
+        status.textContent = '';
+        if (data.errors) showErrors(data.errors);
+        else showErrors({ form: data.message ?? 'Something went wrong. Please try again.' });
+      } catch {
+        status.textContent = '';
+        showErrors({ form: 'We could not reach the server. Please check your connection and try again.' });
+      } finally {
+        submit.disabled = false;
+      }
+    });
+  }
+</script>

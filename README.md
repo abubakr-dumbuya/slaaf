@@ -8,7 +8,9 @@ national governing body for tackle and flag football in Sierra Leone.
 - **[Astro](https://astro.build)** — static output, zero client-side JS by default
 - **[Tailwind CSS v4](https://tailwindcss.com)** — design tokens live in `src/styles/global.css`
 - **Markdown content collections** — news and fixtures, no database
-- Deploys as a static site to any CDN host (Vercel, Cloudflare Pages, Netlify)
+- **[Zod](https://zod.dev)** — validates registrations on the server
+- Deploys to Vercel: pages are prerendered and CDN-cached, and only the
+  registration endpoint runs on demand
 
 ## Running locally
 
@@ -19,6 +21,16 @@ npm run build    # static output to dist/
 npm run preview  # serve the built site
 ```
 
+## Environment variables
+
+Player registrations need somewhere to go. Copy `.env.example` to `.env` and
+set **either** `SLAAF_WEBHOOK_URL` **or** both `RESEND_API_KEY` and
+`SLAAF_NOTIFY_EMAIL`. The same values must be set in the Vercel project for the
+deployed site.
+
+With neither configured, `/api/register` returns 503 and `/play` shows a "not
+yet open" notice — the form never reports success for data it did not store.
+
 ## Project layout
 
 ```
@@ -26,6 +38,7 @@ src/
   components/     Header, Footer, PageHeader, Circled (the marker-ellipse device)
   content/        news/ and fixtures/ Markdown — see CONTENT.md
   layouts/        Base.astro — <head>, SEO tags, structured data, chrome
+  lib/            registration.ts — the registration schema and age rules
   pages/          One file per route
   styles/         global.css — all design tokens
 ```
@@ -61,6 +74,6 @@ members, player numbers, affiliations and competition history are all marked
 - [x] **Phase 1** — Scaffold, design system, layout shell, page routes
 - [ ] **Phase 2** — Real copy for About, Play for Salone, Support
 - [ ] **Phase 3** — Fixtures and results, generated standings, team rosters
-- [ ] **Phase 4** — Registration form, MailerLite newsletter, donations
+- [ ] **Phase 4** — ~~Registration form~~ (done), MailerLite newsletter, donations
 - [ ] **Phase 5** — OG images, analytics, Lighthouse pass, a11y audit
 - [ ] **Phase 6** — Domain cutover, DNS, handover

@@ -1,0 +1,162 @@
+import { t as __exportAll } from "./rolldown-runtime_D7D4PA-g.mjs";
+import { z } from "zod";
+//#region src/lib/registration.ts
+var INTERESTS = [
+	"Playing",
+	"Coaching",
+	"Officiating",
+	"Volunteering"
+];
+var CONNECTIONS = [
+	"Born in Sierra Leone",
+	"Parent born in Sierra Leone",
+	"Grandparent born in Sierra Leone",
+	"Other connection to Sierra Leone",
+	"No connection — I want to support the game"
+];
+var BACKGROUNDS = [
+	"American football (tackle)",
+	"Flag football",
+	"Football (soccer)",
+	"Athletics / track",
+	"Basketball",
+	"Rugby",
+	"Other sport",
+	"New to sport"
+];
+function ageOn(dob, on = /* @__PURE__ */ new Date()) {
+	let age = on.getFullYear() - dob.getFullYear();
+	const m = on.getMonth() - dob.getMonth();
+	if (m < 0 || m === 0 && on.getDate() < dob.getDate()) age--;
+	return age;
+}
+var registrationSchema = z.object({
+	fullName: z.string({ message: "Please enter your full name." }).trim().min(2, "Please enter your full name.").max(120),
+	email: z.email("Please enter a valid email address.").max(200),
+	phone: z.string().trim().max(40).optional().or(z.literal("")),
+	country: z.string({ message: "Please tell us where you live." }).trim().min(2, "Please tell us where you live.").max(80),
+	dateOfBirth: z.coerce.date({ message: "Please enter your date of birth." }),
+	connection: z.enum(CONNECTIONS, { message: "Please choose one option." }),
+	background: z.enum(BACKGROUNDS, { message: "Please choose one option." }),
+	interests: z.array(z.enum(INTERESTS)).min(1, "Please choose at least one."),
+	position: z.string().trim().max(120).optional().or(z.literal("")),
+	experience: z.string().trim().max(2e3).optional().or(z.literal("")),
+	filmUrl: z.url("That does not look like a valid link.").max(500).optional().or(z.literal("")),
+	guardianName: z.string().trim().max(120).optional().or(z.literal("")),
+	guardianEmail: z.email("Please enter a valid email address.").max(200).optional().or(z.literal("")),
+	consent: z.literal("on", { message: "We need your consent to hold these details." }),
+	website: z.string().max(500).optional()
+}).superRefine((data, ctx) => {
+	const age = ageOn(data.dateOfBirth);
+	if (Number.isNaN(age)) return;
+	if (age < 15) {
+		ctx.addIssue({
+			code: "custom",
+			path: ["dateOfBirth"],
+			message: `You must be at least 15 to register.`
+		});
+		return;
+	}
+	if (age > 100) {
+		ctx.addIssue({
+			code: "custom",
+			path: ["dateOfBirth"],
+			message: "Please check this date."
+		});
+		return;
+	}
+	if (age < 18) {
+		if (!data.guardianName) ctx.addIssue({
+			code: "custom",
+			path: ["guardianName"],
+			message: "Under 18s need a parent or guardian named here."
+		});
+		if (!data.guardianEmail) ctx.addIssue({
+			code: "custom",
+			path: ["guardianEmail"],
+			message: "Please give a parent or guardian email address."
+		});
+	}
+});
+//#endregion
+//#region src/pages/api/register.ts
+var register_exports = /* @__PURE__ */ __exportAll({
+	POST: () => POST,
+	prerender: () => false
+});
+async function deliver(payload) {
+	return false;
+}
+var json = (body, status) => new Response(JSON.stringify(body), {
+	status,
+	headers: { "content-type": "application/json" }
+});
+var POST = async ({ request }) => {
+	let form;
+	try {
+		form = await request.formData();
+	} catch {
+		return json({
+			ok: false,
+			message: "Could not read that submission."
+		}, 400);
+	}
+	const raw = {
+		...Object.fromEntries(form),
+		interests: form.getAll("interests").map(String)
+	};
+	const parsed = registrationSchema.safeParse(raw);
+	if (!parsed.success) {
+		const errors = {};
+		for (const issue of parsed.error.issues) {
+			const key = String(issue.path[0] ?? "form");
+			errors[key] ??= issue.message;
+		}
+		return json({
+			ok: false,
+			errors
+		}, 400);
+	}
+	if (parsed.data.website) return json({ ok: true }, 200);
+	const d = parsed.data;
+	const age = ageOn(d.dateOfBirth);
+	const payload = {
+		submittedAt: (/* @__PURE__ */ new Date()).toISOString(),
+		fullName: d.fullName,
+		email: d.email,
+		phone: d.phone || "",
+		country: d.country,
+		dateOfBirth: d.dateOfBirth.toISOString().slice(0, 10),
+		age,
+		isMinor: age < 18,
+		guardianName: d.guardianName || "",
+		guardianEmail: d.guardianEmail || "",
+		connection: d.connection,
+		background: d.background,
+		interests: d.interests,
+		position: d.position || "",
+		experience: d.experience || "",
+		filmUrl: d.filmUrl || ""
+	};
+	try {
+		if (!await deliver(payload)) {
+			console.error("Registration received but no delivery destination is configured.");
+			return json({
+				ok: false,
+				message: "We could not record your registration right now. Please email us and we will add you manually."
+			}, 503);
+		}
+	} catch (err) {
+		console.error("Registration delivery failed:", err);
+		return json({
+			ok: false,
+			message: "Something went wrong sending your registration. Please try again shortly."
+		}, 502);
+	}
+	return json({ ok: true }, 200);
+};
+//#endregion
+//#region \0virtual:astro:page:src/pages/api/register@_@ts
+var page = () => register_exports;
+//#endregion
+export { page };
