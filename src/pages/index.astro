@@ -1,0 +1,116 @@
+---
+import Base from '../layouts/Base.astro';
+import Circled from '../components/Circled.astro';
+
+// NOTE: every value marked TODO needs to be confirmed by SLAAF before launch.
+// Nothing factual about the organisation is invented here.
+const pillars = [
+  {
+    title: 'Grow the game at home',
+    body: 'Introducing tackle and flag football to schools, universities and communities across Sierra Leone — coaching, equipment and safe places to play.',
+  },
+  {
+    title: 'Build national teams',
+    body: 'Selecting and preparing squads to represent Sierra Leone in international flag and tackle competition.',
+  },
+  {
+    title: 'Govern the sport',
+    body: 'Acting as the national governing body: registering clubs, certifying coaches and officials, and upholding player-safety standards.',
+  },
+];
+---
+<Base
+  title="Sierra Leone Authority of American Football"
+  description="SLAAF is the national governing body for American football in Sierra Leone — growing tackle and flag football at home and building national teams to represent Salone on the world stage."
+>
+  <!-- Hero -->
+  <section class="relative overflow-hidden">
+    <div class="container-page pt-16 pb-20 sm:pt-24 sm:pb-28">
+      <p class="eyebrow">Sierra Leone Authority of American Football</p>
+
+      <h1 class="mt-6 text-5xl leading-[0.92] sm:text-7xl lg:text-8xl">
+        Salone <Circled>Gridiron</Circled>
+        <span class="mt-2 block text-atlantic-600">is here.</span>
+      </h1>
+
+      <p class="prose-body mt-8 max-w-2xl">
+        SLAAF is the national governing body for American football in Sierra Leone.
+        We are building the game from the ground up — in schools and communities at
+        home, and with Sierra Leonean talent wherever in the world it is found.
+      </p>
+
+      <div class="mt-10 flex flex-wrap gap-3">
+        <a href="/play" class="btn btn-primary">Play for Salone</a>
+        <a href="/support" class="btn btn-secondary">Support the programme</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- What we do -->
+  <section class="border-y border-ink-900/10 bg-sand-100">
+    <div class="container-page py-20">
+      <h2 class="text-3xl sm:text-4xl">What the Authority does</h2>
+      <div class="mt-12 grid gap-10 md:grid-cols-3">
+        {pillars.map((p, i) => (
+          <div>
+            <p class="font-display text-5xl font-black text-leone-500/30">{String(i + 1).padStart(2, '0')}</p>
+            <h3 class="mt-3 text-xl">{p.title}</h3>
+            <p class="mt-3 text-ink-700 leading-relaxed">{p.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Olympic ambition -->
+  <section class="bg-ink-950 text-sand-100">
+    <div class="container-page py-20 sm:py-28">
+      <div class="grid gap-12 lg:grid-cols-2 lg:items-center">
+        <div>
+          <p class="font-display text-xs font-bold uppercase tracking-[0.14em] text-leone-400">The road ahead</p>
+          <h2 class="mt-5 text-4xl sm:text-5xl">
+            Flag football is an <Circled color="text-leone-400">Olympic</Circled> sport.
+          </h2>
+          <p class="mt-8 text-lg leading-relaxed text-ink-200">
+            Flag football joins the Olympic programme at Los Angeles 2028. For a
+            nation of Sierra Leone&rsquo;s size, that is the most realistic route
+            onto the world&rsquo;s biggest sporting stage that has ever existed in
+            this sport — and it starts with the players, coaches and backers we
+            gather now.
+          </p>
+          <a href="/support" class="btn btn-primary mt-10">Back the journey</a>
+        </div>
+
+        <!-- TODO: replace with real programme milestones once confirmed by SLAAF -->
+        <dl class="grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-white/10">
+          {[
+            { k: 'Founded', v: 'TODO' },
+            { k: 'Registered players', v: 'TODO' },
+            { k: 'Clubs', v: 'TODO' },
+            { k: 'Certified coaches', v: 'TODO' },
+          ].map((s) => (
+            <div class="bg-ink-950 p-8">
+              <dt class="text-xs font-bold uppercase tracking-[0.14em] text-ink-400">{s.k}</dt>
+              <dd class="mt-2 font-display text-4xl font-black text-white">{s.v}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing CTA -->
+  <section class="bg-atlantic-600 text-white">
+    <div class="container-page py-20 text-center">
+      <h2 class="text-5xl sm:text-7xl">Kam join wi</h2>
+      <p class="mx-auto mt-6 max-w-xl text-lg text-white/90">
+        Players, coaches, officials, volunteers and partners — there is a place
+        for you in Sierra Leone&rsquo;s football story.
+      </p>
+      <div class="mt-10 flex flex-wrap justify-center gap-3">
+        <a href="/play" class="btn bg-white text-atlantic-700 hover:bg-sand-100">Register your interest</a>
+        <a href="/contact" class="btn border-2 border-white/50 text-white hover:border-white">Get in touch</a>
+      </div>
+    </div>
+  </section>
+</Base>

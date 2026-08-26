@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------
+   SLAAF design tokens
+   Sampled from the existing slaaf.org holding page so the new site
+   is continuous with the identity already in market:
+     flag green, flag blue, warm near-black, warm off-white ground.
+   --------------------------------------------------------------- */
+@theme {
+  /* Flag green — primary accent */
+  --color-leone-50:  #eefdf3;
+  --color-leone-100: #d6f9e2;
+  --color-leone-200: #b0f1c9;
+  --color-leone-300: #7ae4a8;
+  --color-leone-400: #3fcf80;
+  --color-leone-500: #1eb53a;
+  --color-leone-600: #12933c;
+  --color-leone-700: #117433;
+  --color-leone-800: #135c2c;
+  --color-leone-900: #114b26;
+  --color-leone-950: #042a13;
+
+  /* Flag blue — secondary accent */
+  --color-atlantic-50:  #eff8ff;
+  --color-atlantic-100: #dbeefe;
+  --color-atlantic-200: #bfe2fe;
+  --color-atlantic-300: #93d0fd;
+  --color-atlantic-400: #60b4fa;
+  --color-atlantic-500: #3b96f6;
+  --color-atlantic-600: #0072c6;
+  --color-atlantic-700: #1d5fa8;
+  --color-atlantic-800: #1e508a;
+  --color-atlantic-900: #1e4472;
+  --color-atlantic-950: #172b4a;
+
+  /* Warm off-white ground, sampled from the holding page */
+  --color-sand-50:  #f4f4ef;
+  --color-sand-100: #ecede5;
+  --color-sand-200: #e4e5dd;
+  --color-sand-300: #d3d5c8;
+  --color-sand-400: #b9bcaa;
+
+  /* Warm near-black + neutral ramp */
+  --color-ink-100: #e6e6e3;
+  --color-ink-200: #cfcfc9;
+  --color-ink-300: #adaca3;
+  --color-ink-400: #8a897e;
+  --color-ink-500: #6f6e63;
+  --color-ink-600: #57564d;
+  --color-ink-700: #464540;
+  --color-ink-800: #2c2e27;
+  --color-ink-900: #1f2119;
+  --color-ink-950: #14150f;
+
+  --font-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-sand-200 text-ink-900 font-sans antialiased;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display font-black uppercase tracking-tight text-balance;
+    font-stretch: 92%;
+  }
+  /* Visible focus — federation sites get accessibility-audited. */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-leone-600;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
+  }
+  /* Small condensed green label, as used on the holding page header. */
+  .eyebrow {
+    @apply font-display text-xs font-bold uppercase tracking-[0.14em] text-leone-600;
+    font-stretch: 85%;
+  }
+  .prose-body {
+    @apply text-lg leading-relaxed text-ink-700;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3
+           font-display text-sm font-bold uppercase tracking-wider transition;
+  }
+  /* Modifiers are composed in markup: class="btn btn-primary" */
+  .btn-primary {
+    @apply bg-leone-500 text-white hover:bg-leone-600;
+  }
+  .btn-secondary {
+    @apply bg-ink-900 text-sand-100 hover:bg-ink-800;
+  }
+  .btn-ghost {
+    @apply border-2 border-ink-900/20 text-ink-900 hover:border-ink-900/50;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

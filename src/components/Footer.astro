@@ -1,0 +1,50 @@
+---
+const year = new Date().getFullYear();
+const columns = [
+  { title: 'The Authority', links: [
+    { href: '/about', label: 'About SLAAF' },
+    { href: '/about#governance', label: 'Governance' },
+    { href: '/contact', label: 'Contact' },
+  ]},
+  { title: 'Football', links: [
+    { href: '/teams', label: 'National teams' },
+    { href: '/competitions', label: 'Competitions' },
+    { href: '/play', label: 'Play for Salone' },
+  ]},
+  { title: 'Get behind us', links: [
+    { href: '/support', label: 'Donate' },
+    { href: '/support#partners', label: 'Sponsorship' },
+    { href: '/media', label: 'Press kit' },
+  ]},
+];
+---
+<footer class="bg-ink-950 text-sand-100">
+  <div class="container-page py-16">
+    <div class="grid gap-12 md:grid-cols-[1.4fr_repeat(3,1fr)]">
+      <div>
+        <p class="font-display text-3xl font-black tracking-tight">SLAAF</p>
+        <p class="mt-2 max-w-xs text-sm leading-relaxed text-ink-300">
+          Sierra Leone Authority of American Football — the national governing
+          body for tackle and flag football in Sierra Leone.
+        </p>
+      </div>
+      {columns.map((col) => (
+        <div>
+          <h2 class="font-display text-xs font-bold uppercase tracking-[0.14em] text-leone-400">{col.title}</h2>
+          <ul class="mt-4 space-y-2">
+            {col.links.map((l) => (
+              <li>
+                <a href={l.href} class="text-sm text-ink-200 transition hover:text-white">{l.label}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-14 flex flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
+      <p class="text-xs text-ink-400">&copy; {year} Sierra Leone Authority of American Football. All rights reserved.</p>
+      <p class="font-display text-xs font-bold uppercase tracking-[0.14em] text-atlantic-400">Kam join wi</p>
+    </div>
+  </div>
+</footer>

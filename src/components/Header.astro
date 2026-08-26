@@ -1,0 +1,56 @@
+---
+const nav = [
+  { href: '/about', label: 'About' },
+  { href: '/play', label: 'Play for Salone' },
+  { href: '/teams', label: 'Teams' },
+  { href: '/competitions', label: 'Competitions' },
+  { href: '/news', label: 'News' },
+  { href: '/support', label: 'Support' },
+];
+const path = Astro.url.pathname;
+---
+<header class="sticky top-0 z-50 border-b border-ink-900/10 bg-sand-200/90 backdrop-blur">
+  <div class="container-page flex items-center justify-between gap-6 py-4">
+    <a href="/" class="group flex flex-col leading-none">
+      <span class="font-display text-2xl font-black tracking-tight text-ink-900">SLAAF</span>
+      <span class="eyebrow mt-1 hidden sm:block">Sierra Leone Authority of American Football</span>
+    </a>
+
+    <nav aria-label="Primary" class="hidden lg:block">
+      <ul class="flex items-center gap-7">
+        {nav.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              aria-current={path.startsWith(item.href) ? 'page' : undefined}
+              class:list={[
+                'whitespace-nowrap font-display text-sm font-bold uppercase tracking-wide transition hover:text-leone-600',
+                path.startsWith(item.href) ? 'text-leone-600' : 'text-ink-800',
+              ]}
+            >{item.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <details class="lg:hidden [&_svg]:open:rotate-90">
+      <summary class="flex cursor-pointer items-center gap-2 rounded-full border-2 border-ink-900/20 px-4 py-2 font-display text-xs font-bold uppercase tracking-wider">
+        Menu
+        <svg class="h-3 w-3 transition-transform" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+          <path d="M4 2l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </summary>
+      <nav aria-label="Primary mobile" class="absolute inset-x-0 top-full border-b border-ink-900/10 bg-sand-100 shadow-lg">
+        <ul class="container-page flex flex-col py-2">
+          {nav.map((item) => (
+            <li>
+              <a href={item.href} class="block border-b border-ink-900/5 py-3 font-display text-sm font-bold uppercase tracking-wide">
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </details>
+  </div>
+</header>
