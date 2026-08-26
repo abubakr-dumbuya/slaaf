@@ -302,11 +302,12 @@ var CONNECTIONS = [
 	"Other connection to Sierra Leone",
 	"No connection — I want to support the game"
 ];
-var GENDERS = [
-	"Male",
-	"Female",
-	"Prefer not to say"
-];
+/**
+* Competition category. Federations set eligibility for international play by
+* sex rather than gender identity, and there is no "prefer not to say" option
+* because a category has to be determined before anyone can be selected.
+*/
+var SEXES = ["Male", "Female"];
 var RESIDENCY = [
 	"No — Sierra Leone only",
 	"Yes — citizen of another country",
@@ -337,7 +338,7 @@ var registrationSchema = z.object({
 	phone: z.string().trim().max(40).optional().or(z.literal("")),
 	country: z.string({ message: "Please tell us where you live." }).trim().min(2, "Please tell us where you live.").max(80),
 	dateOfBirth: z.coerce.date({ message: "Please enter your date of birth." }),
-	gender: z.enum(GENDERS, { message: "Please choose one option." }),
+	sex: z.enum(SEXES, { message: "Please choose one option." }),
 	connection: z.enum(CONNECTIONS, { message: "Please choose one option." }),
 	residency: z.enum(RESIDENCY, { message: "Please choose one option." }),
 	residencyCountry: z.string().trim().max(80).optional().or(z.literal("")),
@@ -458,7 +459,7 @@ var POST = async ({ request }) => {
 		country: normaliseCountry(d.country) ?? d.country,
 		dateOfBirth: d.dateOfBirth.toISOString().slice(0, 10),
 		age,
-		gender: d.gender,
+		sex: d.sex,
 		isMinor: age < 18,
 		guardianName: d.guardianName || "",
 		guardianPhone: d.guardianPhone || "",
