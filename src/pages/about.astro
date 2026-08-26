@@ -76,8 +76,34 @@ const bodies = [
     </div>
   </section>
 
-  <!-- Objectives -->
+  <!-- Leadership -->
   <section class="border-y border-ink-900/10 bg-sand-100">
+    <div class="container-page py-20">
+      <h2 class="text-3xl sm:text-4xl">Executive Board</h2>
+      <p class="mt-4 text-ink-600">Term 2025&ndash;2029</p>
+
+      <ul class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        {executive.map((p) => (
+          <li class="border-t-4 border-leone-500 pt-5">
+            <p class="font-display text-xl font-black uppercase tracking-tight">{p.name}</p>
+            <p class="mt-1 text-ink-600">{p.role}</p>
+          </li>
+        ))}
+      </ul>
+
+      <h2 class="mt-20 text-3xl sm:text-4xl">Advisory Board</h2>
+      <ul class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        {advisory.map((name) => (
+          <li class="border-t-4 border-atlantic-600 pt-5">
+            <p class="font-display text-xl font-black uppercase tracking-tight">{name}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Objectives -->
+  <section>
     <div class="container-page py-20">
       <h2 class="text-3xl sm:text-4xl">What we exist to do</h2>
       <ol class="mt-12 grid gap-x-12 gap-y-8 sm:grid-cols-2">
@@ -134,32 +160,6 @@ const bodies = [
         </div>
       ))}
     </dl>
-  </section>
-
-  <!-- Leadership -->
-  <section class="border-t border-ink-900/10 bg-sand-100">
-    <div class="container-page py-20">
-      <h2 class="text-3xl sm:text-4xl">Executive Board</h2>
-      <p class="mt-4 text-ink-600">Term 2025&ndash;2029</p>
-
-      <ul class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        {executive.map((p) => (
-          <li class="border-t-4 border-leone-500 pt-5">
-            <p class="font-display text-xl font-black uppercase tracking-tight">{p.name}</p>
-            <p class="mt-1 text-ink-600">{p.role}</p>
-          </li>
-        ))}
-      </ul>
-
-      <h2 class="mt-20 text-3xl sm:text-4xl">Advisory Board</h2>
-      <ul class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        {advisory.map((name) => (
-          <li class="border-t-4 border-atlantic-600 pt-5">
-            <p class="font-display text-xl font-black uppercase tracking-tight">{name}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
   </section>
 
   <Placeholder need="Still needed for this page: the date SLAAF was founded, portrait photographs of board members, and confirmation of any international federation membership (nothing on this page claims IFAF affiliation, because no source document establishes it)." />
