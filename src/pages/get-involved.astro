@@ -6,9 +6,10 @@ import RegistrationForm from '../components/RegistrationForm.astro';
 
 // Written once. Shown under the lede on mobile and tablet, and in the sidebar
 // from lg up, where there is a column to hold it.
-const whoCanRegister = [
-  "Anyone aged 15 or over with a connection to Sierra Leone — by birth, through a parent or grandparent, or otherwise — wherever in the world you live. You do not need to have played American football before, or to be a player at all: coaches, officials and volunteers are as much a part of building the game as athletes are.",
-  "If you are under 18, we will ask for a parent or guardian's details before you can take part.",
+const notes = [
+  "Open to anyone 15 or over with a connection to Sierra Leone — by birth, or through a parent or grandparent — wherever you live.",
+  "No experience of American football needed. Under 18s will need a parent or guardian's details.",
+  "Registrations go onto SLAAF's database: how we select for combines, training and squads, and how we staff events. We reply by email.",
 ];
 
 ---
@@ -18,25 +19,20 @@ const whoCanRegister = [
 >
   <PageHeader
     title="Get involved"
-    lede="We are building Sierra Leone's national football programme from the ground up — and we need players, coaches, officials and volunteers, at home and across the diaspora. There is a place here whether or not you ever step onto the field."
+    lede="We need players, coaches, officials and volunteers — in Sierra Leone and across the diaspora."
   >
-    <div class="mt-6 max-w-2xl space-y-4">
-      {whoCanRegister.map((para) => <p class="leading-relaxed text-ink-700">{para}</p>)}
+    <div class="mt-10 grid gap-8 md:grid-cols-3">
+      {notes.map((note) => (
+        <p class="border-t-2 border-ink-900/15 pt-4 leading-relaxed text-ink-700">{note}</p>
+      ))}
     </div>
-    <p class="mt-6 max-w-2xl leading-relaxed text-ink-700">
-      Registrations go onto SLAAF's database, which is how we select for
-      combines, training sessions and, in time, national squads, and how we find
-      coaches, officials and volunteers for events. We will be in touch by email
-      — so please use an address you check.
-    </p>
   </PageHeader>
 
   <section class="container-page py-16">
     <h2 class="text-3xl sm:text-4xl">Register your interest</h2>
     <p class="prose-body mt-5 max-w-2xl">
-      Fill this in and it comes straight to SLAAF. There is no commitment at this
-      stage — it tells us who you are, where you are and what you want to do, so
-      we can contact you as programmes, camps and trials are scheduled.
+      No commitment at this stage — it just tells us who you are and what you
+      want to do.
     </p>
 
 
