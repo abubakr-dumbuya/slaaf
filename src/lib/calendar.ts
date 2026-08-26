@@ -45,10 +45,6 @@ export function icsUrl(calendarId: string): string {
   return `https://calendar.google.com/calendar/ical/${encodeURIComponent(calendarId)}/public/basic.ics`;
 }
 
-export function htmlUrl(calendarId: string): string {
-  return `https://calendar.google.com/calendar/embed?src=${encodeURIComponent(calendarId)}`;
-}
-
 /** RFC 5545 folds long lines with CRLF + a single space or tab. */
 function unfold(raw: string): string[] {
   return raw.replace(/\r\n/g, '\n').replace(/\n[ \t]/g, '').split('\n');

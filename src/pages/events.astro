@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
 import Placeholder from '../components/Placeholder.astro';
-import { fetchUpcoming, htmlUrl } from '../lib/calendar';
+import { fetchUpcoming } from '../lib/calendar';
 
 // Read live so a newly added event appears without a rebuild.
 export const prerender = false;
@@ -86,11 +86,6 @@ const zoneLabel = (date: Date, tz: string) =>
       </p>
     )}
 
-    {calendarId && (
-      <a href={htmlUrl(calendarId)} class="btn btn-ghost mt-10" target="_blank" rel="noopener noreferrer">
-        Add to your calendar
-      </a>
-    )}
   </section>
 
   {!calendarId && (
