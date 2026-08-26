@@ -205,3 +205,78 @@ export async function fetchUpcoming(calendarId: string, feedUrl?: string): Promi
     return null;
   }
 }
+
+/** RFC 5545 requires escaping these inside text values. */
+function escapeIcs(value: string): string {
+  return value
+    .replace(/\\/g, '\\\\')
+    .replace(/;/g, '\;')
+    .replace(/,/g, '\\,')
+    .replace(/\r?\n/g, '\\n');
+}
+
+/** Lines are limited to 75 octets, continued with a leading space. */
+function foldLine(line: string): string {
+  const bytes = Buffer.from(line, 'utf8');
+  if (bytes.length <= 75) return line;
+  const out: string[] = [];
+  let start = 0;
+  while (start < bytes.length) {
+    // Step back to a character boundary so multi-byte characters survive.
+    let end = Math.min(start + (out.length === 0 ? 75 : 74), bytes.length);
+    while (end > start && end < bytes.length && (bytes[end] & 0xc0) === 0x80) end--;
+    out.push((out.length === 0 ? '' : ' ') + bytes.subarray(start, end).toString('utf8'));
+    start = end;
+  }
+  return out.join('\r\n');
+}
+
+const stampUtc = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+const stampDate = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, '');
+
+/**
+ * A single-event calendar file, for the "Add to calendar" download. Times are
+ * written in UTC so no VTIMEZONE definition is needed and every client agrees
+ * on the instant.
+ */
+export function toIcs(event: CalendarEvent, now = new Date()): string {
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//SLAAF//Events//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    `UID:${escapeIcs(event.uid)}`,
+    `DTSTAMP:${stampUtc(now)}`,
+  ];
+
+  if (event.allDay) {
+    lines.push(`DTSTART;VALUE=DATE:${stampDate(event.start)}`);
+    const end = event.end ?? new Date(event.start.valueOf() + 86400000);
+    lines.push(`DTEND;VALUE=DATE:${stampDate(end)}`);
+  } else {
+    lines.push(`DTSTART:${stampUtc(event.start)}`);
+    if (event.end) lines.push(`DTEND:${stampUtc(event.end)}`);
+  }
+
+  lines.push(`SUMMARY:${escapeIcs(event.summary)}`);
+  if (event.location) lines.push(`LOCATION:${escapeIcs(event.location)}`);
+  if (event.description) lines.push(`DESCRIPTION:${escapeIcs(event.description)}`);
+  lines.push('END:VEVENT', 'END:VCALENDAR');
+
+  return lines.map(foldLine).join('\r\n') + '\r\n';
+}
+
+/** A filename-safe slug for the downloaded file. */
+export function slugify(value: string): string {
+  return (
+    value
+      .normalize('NFKD')
+      .replace(/[^\w\s-]/g, '')
+      .trim()
+      .replace(/\s+/g, '-')
+      .toLowerCase()
+      .slice(0, 60) || 'event'
+  );
+}

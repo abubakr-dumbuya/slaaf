@@ -81,6 +81,19 @@ const zoneLabel = (date: Date, tz: string) =>
                     )}
                   </p>
                 )}
+
+                <p class="mt-5">
+                  <a
+                    href={`/events/${encodeURIComponent(event.uid)}.ics`}
+                    class="type-label inline-flex items-center gap-2 text-leone-700 underline underline-offset-4 hover:text-leone-800"
+                  >
+                    <svg class="h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                      <path d="M8 2v8m0 0L5 7m3 3 3-3M3 12v1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1"
+                            stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Add to calendar
+                  </a>
+                </p>
               </div>
             </div>
           </li>
