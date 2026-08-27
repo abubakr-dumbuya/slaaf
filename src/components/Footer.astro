@@ -1,25 +1,24 @@
 ---
 const year = new Date().getFullYear();
+/** The federation's public address, also where registrations are delivered. */
+const EMAIL = 'info@slaaf.org';
+
 const columns = [
   { title: 'The Authority', links: [
     { href: '/about', label: 'About SLAAF' },
     { href: '/about#governance', label: 'Governance' },
-    { href: '/contact', label: 'Contact' },
+    { href: `mailto:${EMAIL}`, label: 'Contact' },
   ]},
   { title: 'Football', links: [
-    { href: '/events', label: 'Upcoming events' },
     { href: '/get-involved', label: 'Get involved' },
-  ]},
-  { title: 'Get behind us', links: [
+    { href: '/events', label: 'Upcoming events' },
     { href: '/apparel', label: 'Apparel' },
-    { href: '/contact', label: 'Sponsorship' },
-    { href: '/media', label: 'Press kit' },
   ]},
 ];
 ---
 <footer class="bg-ink-950 text-sand-100">
   <div class="container-page py-16">
-    <div class="grid gap-12 md:grid-cols-[1.4fr_repeat(3,1fr)]">
+    <div class="grid gap-12 md:grid-cols-[1.4fr_repeat(2,1fr)]">
       <div>
         <p class="type-title text-3xl">SLAAF</p>
         <p class="mt-2 max-w-xs text-sm leading-relaxed text-ink-300">
