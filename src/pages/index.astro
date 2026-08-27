@@ -111,10 +111,10 @@ const pillars = [
           <p class="mt-4 leading-relaxed text-ink-700">
             Every piece is available on presale now, with delivery expected in late 2026.
           </p>
-          <a href="/apparel" class="btn btn-primary mt-8">See the collection</a>
         </div>
 
-        {merch.length > 0 && (
+        <div>
+          {merch.length > 0 && (
           <ul class="grid grid-cols-3 gap-4 sm:gap-6">
             {merch.map((product) => (
               <li>
@@ -137,7 +137,9 @@ const pillars = [
               </li>
             ))}
           </ul>
-        )}
+          )}
+          <a href="/apparel" class="btn btn-primary mt-8">See the collection</a>
+        </div>
       </div>
     </div>
   </section>
