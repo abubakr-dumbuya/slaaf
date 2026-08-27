@@ -19,7 +19,8 @@ const events = calendarId ? await fetchUpcoming(calendarId, feedUrl) : null;
 // scheduled in — an event at 20:30 in Seattle should read 20:30, not 03:30.
 // Events exported without one fall back to the calendar's own zone.
 const FALLBACK_TZ = 'Africa/Freetown';
-const zoneOf = (event: { timeZone: string | null }) => event.timeZone ?? FALLBACK_TZ;
+const zoneOf = (event: { timeZone: string | null; allDay: boolean }) =>
+  event.allDay ? 'UTC' : (event.timeZone ?? FALLBACK_TZ);
 
 const fmt = (timeZone: string, options: Intl.DateTimeFormatOptions) =>
   new Intl.DateTimeFormat('en-GB', { ...options, timeZone });
@@ -29,6 +30,18 @@ const timeFmt = (tz: string) => fmt(tz, { hour: '2-digit', minute: '2-digit' });
 const zoneFmt = (tz: string) => fmt(tz, { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' });
 const monthFmt = (tz: string) => fmt(tz, { month: 'short' });
 const dateFmt = (tz: string) => fmt(tz, { day: 'numeric' });
+
+const DAY_MS = 86_400_000;
+
+/**
+ * An all-day DTEND is exclusive in iCalendar: an event ending "31 July" runs
+ * to the 30th. Step back a day to get the last day people actually attend.
+ */
+const lastDayOf = (event: { end: Date | null; start: Date }) => {
+  if (!event.end) return null;
+  const last = new Date(event.end.valueOf() - DAY_MS);
+  return last.valueOf() > event.start.valueOf() ? last : null;
+};
 
 /** "GMT", "PDT" — the trailing token of a short-zone format. */
 const zoneLabel = (date: Date, tz: string) =>
@@ -76,7 +89,11 @@ const zoneLabel = (date: Date, tz: string) =>
                       {' '}<span class="text-ink-500">{zoneLabel(event.start, zoneOf(event))}</span>
                     </span>
                   )}
-                  {event.allDay && <span> · All day</span>}
+                  {event.allDay && (
+                    lastDayOf(event)
+                      ? <span> – <time datetime={lastDayOf(event)!.toISOString()}>{dayFmt(zoneOf(event)).format(lastDayOf(event)!)}</time></span>
+                      : <span> · All day</span>
+                  )}
                 </p>
                 {event.location && <p class="mt-1 text-ink-600">{event.location}</p>}
                 {event.description && (
@@ -142,6 +159,12 @@ const zoneLabel = (date: Date, tz: string) =>
   const weekdayFmt = new Intl.DateTimeFormat('en-GB', { weekday: 'short' });
   const restFmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
   const formatDay = (d: Date) => `${weekdayFmt.format(d)}, ${restFmt.format(d)}`;
+
+  // All-day values are calendar dates held at UTC midnight. Formatting them in
+  // the viewer's zone would shift them a day for anyone west of UTC.
+  const utcWeekdayFmt = new Intl.DateTimeFormat('en-GB', { weekday: 'short', timeZone: 'UTC' });
+  const utcRestFmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+  const formatDayUtc = (d: Date) => `${utcWeekdayFmt.format(d)}, ${utcRestFmt.format(d)}`;
   const timeFmt = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit' });
   const zoneFmt = new Intl.DateTimeFormat('en-GB', {
     hour: '2-digit', minute: '2-digit', timeZoneName: 'short',
@@ -160,8 +183,26 @@ const zoneLabel = (date: Date, tz: string) =>
     el.querySelector<HTMLElement>('[data-day]')!.textContent = dateFmt.format(start);
   });
 
+  const DAY_MS = 86_400_000;
+
   document.querySelectorAll<HTMLElement>('[data-when]').forEach((el) => {
-    if (el.dataset.allDay === 'true') return;
+    if (el.dataset.allDay === 'true') {
+      // All-day DTEND is exclusive: an event ending "31 July" runs to the 30th.
+      const from = new Date(el.dataset.start!);
+      const rawEnd = el.dataset.end ? new Date(el.dataset.end) : null;
+      if (!rawEnd || Number.isNaN(rawEnd.valueOf())) return;
+      const to = new Date(rawEnd.valueOf() - DAY_MS);
+      if (to.valueOf() <= from.valueOf()) return;
+
+      const start = document.createElement('time');
+      start.dateTime = from.toISOString();
+      start.textContent = formatDayUtc(from);
+      const end = document.createElement('time');
+      end.dateTime = to.toISOString();
+      end.textContent = formatDayUtc(to);
+      el.replaceChildren(start, document.createTextNode(' – '), end);
+      return;
+    }
     const start = new Date(el.dataset.start!);
     if (Number.isNaN(start.valueOf())) return;
     const end = el.dataset.end ? new Date(el.dataset.end) : null;
