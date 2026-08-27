@@ -86,8 +86,17 @@
      weight, size and tracking stay consistent between components.
      --------------------------------------------------------------- */
 
-  /* Small label: dates, table headings, section kickers. */
+  /* Small label: dates, table headings, section kickers.
+     14px is the floor for anything in the page body — below that, uppercase
+     tracked-out type gets hard to read on a phone in daylight. */
   .type-label {
+    @apply font-display text-sm font-bold uppercase tracking-[0.14em];
+    font-stretch: var(--display-stretch);
+  }
+
+  /* The one exception, reserved for the footer, where labels are wayfinding
+     rather than content and the smaller size is deliberate. */
+  .type-label-xs {
     @apply font-display text-xs font-bold uppercase tracking-[0.14em];
     font-stretch: var(--display-stretch);
   }

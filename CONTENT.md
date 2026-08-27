@@ -1,84 +1,42 @@
 # Updating the site
 
-You do not need to write code to publish news or add a fixture. Both are plain
-text files in this repository. Add a file, commit it, and the site rebuilds and
-deploys automatically.
+Most of what changes on this site is not edited here at all.
 
-## Publishing a news post
+## Upcoming events
 
-Create a file in `src/content/news/` named after the article, ending in `.md`.
-For example `src/content/news/first-national-training-camp.md`:
+`/events` reads the federation's public Google Calendar. Add, edit or remove an
+event in Google Calendar and the site follows on the next page load — no
+rebuild, no code change.
 
-```markdown
----
-title: "First national training camp held in Freetown"
-date: 2026-09-14
-summary: "Forty players attended the Authority's first open camp at the National Stadium."
-author: "SLAAF Communications"
-draft: false
----
+For an event to appear with its title, location and description, the calendar's
+**Access permissions for events** must be set to *See all event details*, not
+*See only free/busy*. With free/busy sharing, Google sends the word "Busy" and
+nothing else.
 
-Write the article here in normal paragraphs. Leave a blank line between them.
+The description is worth filling in: it renders under the event, links inside it
+become clickable, and it is what tells someone whether to turn up with boots.
 
-## Subheadings look like this
+## Apparel
 
-You can **bold** text, *italicise* it, or [add a link](https://www.slaaf.org).
-```
+`/apparel` reads the FAMBUL x SLAAF collection from Shopify. Add a product to the
+collection, change a price, or sell out a size, and the site reflects it on the
+next page load.
 
-Field notes:
+Product titles are tidied automatically — "*PRESALE*" and a leading "SLAAF
+American Football" are stripped, since the page already says both.
 
-| Field | Required | Notes |
-|---|---|---|
-| `title` | yes | Shown as the headline and the browser tab title |
-| `date` | yes | `YYYY-MM-DD`. Controls ordering — newest first |
-| `summary` | yes | One or two sentences. Used on the news index and in link previews |
-| `author` | no | Omit if the post is from the Authority generally |
-| `draft` | no | Set `true` to keep a post out of the live site while you work on it |
+## Registrations
 
-The filename becomes the web address, so
-`first-national-training-camp.md` publishes at
-`slaaf.org/news/first-national-training-camp/`. Use lowercase words separated by
-hyphens, and do not rename a file after publishing — that breaks any links
-people have shared.
+Submissions from `/get-involved` are emailed to info@slaaf.org. Nothing is
+stored on the website.
 
-## Adding a fixture or result
+## Everything else
 
-Create a file in `src/content/fixtures/`, for example
-`src/content/fixtures/2026-10-04-sierra-leone-v-ghana.md`:
-
-```markdown
----
-date: 2026-10-04
-competition: "IFAF Africa Flag Championship"
-code: flag
-home: "Sierra Leone"
-away: "Ghana"
-venue: "Accra Sports Stadium, Accra"
----
-```
-
-Leave `homeScore` and `awayScore` out until the match has been played, then add
-them to turn the fixture into a result:
-
-```markdown
-homeScore: 26
-awayScore: 19
-```
-
-`code` must be either `flag` or `tackle`. As with news posts, adding
-`draft: true` keeps a fixture off the live site while you prepare it.
-
-Standings are calculated from these files automatically — there is no separate
-table to maintain.
+Page copy — About, Get involved, the homepage — lives in the code. Ask a
+developer, or open an issue describing the change you want.
 
 ## Images
 
-Put images in `public/` and reference them from a post as `/my-image.jpg`.
-Please resize photographs to no more than 2000px on the long edge before adding
-them, so pages stay fast for people on mobile data.
-
-## If something goes wrong
-
-If a file has a mistake in it — a missing `title`, a malformed date — the build
-will fail and the live site will simply stay as it was. Nothing breaks publicly.
-The build log will say which file and which field caused the problem.
+Put images in `public/` and reference them as `/my-image.jpg`. Please resize
+photographs to no more than 2000px on the long edge before adding them, so pages
+stay fast for people on mobile data.

@@ -7,7 +7,6 @@ national governing body for tackle and flag football in Sierra Leone.
 
 - **[Astro](https://astro.build)** — static output, zero client-side JS by default
 - **[Tailwind CSS v4](https://tailwindcss.com)** — design tokens live in `src/styles/global.css`
-- **Markdown content collections** — news and fixtures, no database
 - **[Zod](https://zod.dev)** — validates registrations on the server
 - Deploys to Vercel: pages are prerendered and CDN-cached, and only the
   registration endpoint runs on demand
@@ -49,10 +48,10 @@ rebuild. With no calendar configured the page explains what is missing.
 ```
 src/
   components/     Header, Footer, PageHeader, Circled (the marker-ellipse device)
-  content/        news/ and fixtures/ Markdown — see CONTENT.md
   layouts/        Base.astro — <head>, SEO tags, structured data, chrome
   lib/            registration.ts — the registration schema and age rules
                   calendar.ts — reads and parses the public calendar feed
+                  shop.ts — reads the Shopify collection
   pages/          One file per route
   styles/         global.css — all design tokens
 ```
@@ -87,7 +86,6 @@ members, player numbers, affiliations and competition history are all marked
 
 - [x] **Phase 1** — Scaffold, design system, layout shell, page routes
 - [ ] **Phase 2** — Real copy for About, Play for Salone, Support
-- [ ] **Phase 3** — Fixtures and results, generated standings, team rosters
 - [ ] **Phase 4** — ~~Registration form~~ (done), MailerLite newsletter, donations
 - [ ] **Phase 5** — OG images, analytics, Lighthouse pass, a11y audit
 - [ ] **Phase 6** — Domain cutover, DNS, handover
