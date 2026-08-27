@@ -2,6 +2,17 @@
 import { Image } from 'astro:assets';
 import logo from '../assets/slaaf-logo.png';
 
+interface Props {
+  /**
+   * Sit transparently over a photographic hero instead of on the sand bar.
+   * The overlay header is absolute rather than sticky: transparent-and-sticky
+   * would scroll onto the sand ground and leave white nav text illegible, and
+   * swapping it back on scroll needs client-side JS.
+   */
+  overlay?: boolean;
+}
+const { overlay = false } = Astro.props;
+
 const nav = [
   { href: '/get-involved', label: 'Get involved' },
   { href: '/events', label: 'Events' },
@@ -10,7 +21,14 @@ const nav = [
 ];
 const path = Astro.url.pathname;
 ---
-<header class="sticky top-0 z-50 border-b border-ink-900/10 bg-sand-200/90 backdrop-blur">
+<header
+  class:list={[
+    'z-50',
+    overlay
+      ? 'absolute inset-x-0 top-0'
+      : 'sticky top-0 border-b border-ink-900/10 bg-sand-200/90 backdrop-blur',
+  ]}
+>
   <div class="container-page flex items-center justify-between gap-6 py-3">
     <a href="/" class="shrink-0" aria-label="Sierra Leone Authority of American Football — home">
       <Image
@@ -18,7 +36,7 @@ const path = Astro.url.pathname;
         alt="Sierra Leone Authority of American Football"
         height={56}
         densities={[1, 2]}
-        class="h-11 w-auto sm:h-14"
+        class:list={['h-11 w-auto sm:h-14', overlay && 'brightness-0 invert']}
       />
     </a>
 
@@ -30,8 +48,11 @@ const path = Astro.url.pathname;
               href={item.href}
               aria-current={path.startsWith(item.href) ? 'page' : undefined}
               class:list={[
-                'type-control whitespace-nowrap transition hover:text-leone-600',
-                path.startsWith(item.href) ? 'text-leone-600' : 'text-ink-800',
+                'type-control whitespace-nowrap transition',
+                overlay
+                  ? 'text-white hover:text-leone-300'
+                  : 'hover:text-leone-600',
+                !overlay && (path.startsWith(item.href) ? 'text-leone-600' : 'text-ink-800'),
               ]}
             >{item.label}</a>
           </li>
@@ -40,7 +61,12 @@ const path = Astro.url.pathname;
     </nav>
 
     <details class="lg:hidden [&_svg]:open:rotate-90">
-      <summary class="type-control flex cursor-pointer items-center gap-2 rounded-full border-2 border-ink-900/20 px-4 py-2">
+      <summary
+        class:list={[
+          'type-control flex cursor-pointer items-center gap-2 rounded-full border-2 px-4 py-2',
+          overlay ? 'border-white/50 text-white' : 'border-ink-900/20',
+        ]}
+      >
         Menu
         <svg class="h-3 w-3 transition-transform" viewBox="0 0 12 12" fill="none" aria-hidden="true">
           <path d="M4 2l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>

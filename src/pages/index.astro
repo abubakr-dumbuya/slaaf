@@ -36,6 +36,7 @@ const pillars = [
 <Base
   title="Sierra Leone Authority of American Football"
   description="Sierra Leone Authority of American Football (SLAAF) — the national governing body for tackle and flag football, building the game at home and across the diaspora."
+  headerOverlay
 >
   <!-- Hero. The photo fills the section and the copy sits over it, so the
        accent switches from atlantic blue to leone green: blue at this weight
@@ -63,13 +64,6 @@ const pillars = [
         American Football
         <span class="mt-2 block">Has Arrived in <span class="text-leone-400">Sierra Leone</span></span>
       </h1>
-
-      <p class="mt-8 max-w-2xl text-lg leading-relaxed text-sand-200">
-        Sierra Leone Authority of American Football (SLAAF) is the national
-        governing body for American football in Sierra Leone. We are building the
-        game from the ground up — in schools and communities at home, and with
-        Sierra Leonean talent wherever in the world it is found.
-      </p>
     </div>
   </section>
 
@@ -77,9 +71,6 @@ const pillars = [
   <section class="border-y border-ink-900/10 bg-sand-100">
     <div class="container-page py-20">
       <h2 class="text-3xl sm:text-4xl">Get involved</h2>
-      <p class="prose-body mt-4 max-w-2xl">
-        You do not have to be a player, and you do not have to be in Sierra Leone.
-      </p>
 
       {/* Sides and bottom are declared separately from the top so the green
           cap's width does not collide with the hairline border. */}
@@ -109,6 +100,12 @@ const pillars = [
   <section>
     <div class="container-page py-20">
       <h2 class="text-3xl sm:text-4xl">What the Authority does</h2>
+      <p class="prose-body mt-6">
+        Sierra Leone Authority of American Football (SLAAF) is the national
+        governing body for American football in Sierra Leone. We are building the
+        game from the ground up — in schools and communities at home, and with
+        Sierra Leonean talent wherever in the world it is found.
+      </p>
       <div class="mt-12 grid gap-10 md:grid-cols-3">
         {pillars.map((p, i) => (
           <div>

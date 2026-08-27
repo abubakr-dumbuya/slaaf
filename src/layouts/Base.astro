@@ -8,8 +8,10 @@ interface Props {
   description: string;
   /** Path to an OG image in /public. Falls back to the default social card. */
   ogImage?: string;
+  /** Lay the header over a photographic hero rather than on the sand bar. */
+  headerOverlay?: boolean;
 }
-const { title, description, ogImage = '/og-default.jpg' } = Astro.props;
+const { title, description, ogImage = '/og-default.jpg', headerOverlay = false } = Astro.props;
 
 const siteName = 'Sierra Leone Authority of American Football';
 const fullTitle = title === siteName ? title : `${title} | SLAAF`;
@@ -61,7 +63,7 @@ const ogUrl = new URL(ogImage, Astro.site);
     <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-3 focus:rounded focus:bg-ink-900 focus:px-4 focus:py-2 focus:text-white">
       Skip to content
     </a>
-    <Header />
+    <Header overlay={headerOverlay} />
     <main id="main"><slot /></main>
     <Footer />
   </body>
