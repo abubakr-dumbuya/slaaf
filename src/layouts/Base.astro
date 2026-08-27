@@ -47,6 +47,21 @@ const ogUrl = new URL(ogImage, Astro.site);
       href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..900&family=Inter:wght@400..700&display=swap"
     />
 
+    <noscript>
+      <style>
+        [data-overlay-header] {
+          background-color: #e4e5dd;           /* sand-200 */
+          border-bottom: 1px solid rgba(31, 33, 25, 0.1);
+        }
+        [data-overlay-header] img { filter: none; }
+        [data-overlay-header] nav a { color: #2c2e27; }   /* ink-800 */
+        [data-overlay-header] summary {
+          color: #1f2119;                      /* ink-900 */
+          border-color: rgba(31, 33, 25, 0.2);
+        }
+      </style>
+    </noscript>
+
     <script
       type="application/ld+json"
       set:html={JSON.stringify({
@@ -63,6 +78,9 @@ const ogUrl = new URL(ogImage, Astro.site);
     <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-3 focus:rounded focus:bg-ink-900 focus:px-4 focus:py-2 focus:text-white">
       Skip to content
     </a>
+    {headerOverlay && (
+      <div data-header-sentinel aria-hidden="true" class="pointer-events-none absolute top-0 h-24 w-px"></div>
+    )}
     <Header overlay={headerOverlay} />
     <main id="main"><slot /></main>
     <Footer />

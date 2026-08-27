@@ -4,10 +4,9 @@ import logo from '../assets/slaaf-logo.png';
 
 interface Props {
   /**
-   * Sit transparently over a photographic hero instead of on the sand bar.
-   * The overlay header is absolute rather than sticky: transparent-and-sticky
-   * would scroll onto the sand ground and leave white nav text illegible, and
-   * swapping it back on scroll needs client-side JS.
+   * Sit transparently over a photographic hero, then swap to the sand bar once
+   * the page scrolls. Fixed rather than sticky: sticky would occupy flow and
+   * push the hero down instead of laying over it.
    */
   overlay?: boolean;
 }
@@ -22,10 +21,11 @@ const nav = [
 const path = Astro.url.pathname;
 ---
 <header
+  data-overlay-header={overlay ? '' : undefined}
   class:list={[
-    'z-50',
+    'group z-50 transition-colors duration-300',
     overlay
-      ? 'absolute inset-x-0 top-0'
+      ? 'fixed inset-x-0 top-0 data-scrolled:border-b data-scrolled:border-ink-900/10 data-scrolled:bg-sand-200/90 data-scrolled:backdrop-blur'
       : 'sticky top-0 border-b border-ink-900/10 bg-sand-200/90 backdrop-blur',
   ]}
 >
@@ -36,7 +36,10 @@ const path = Astro.url.pathname;
         alt="Sierra Leone Authority of American Football"
         height={56}
         densities={[1, 2]}
-        class:list={['h-11 w-auto sm:h-14', overlay && 'brightness-0 invert']}
+        class:list={[
+          'h-11 w-auto transition duration-300 sm:h-14',
+          overlay && 'brightness-0 invert group-data-scrolled:brightness-100 group-data-scrolled:invert-0',
+        ]}
       />
     </a>
 
@@ -50,7 +53,7 @@ const path = Astro.url.pathname;
               class:list={[
                 'type-control whitespace-nowrap transition',
                 overlay
-                  ? 'text-white hover:text-leone-300'
+                  ? 'text-white hover:text-leone-300 group-data-scrolled:text-ink-800 group-data-scrolled:hover:text-leone-600'
                   : 'hover:text-leone-600',
                 !overlay && (path.startsWith(item.href) ? 'text-leone-600' : 'text-ink-800'),
               ]}
@@ -63,8 +66,10 @@ const path = Astro.url.pathname;
     <details class="lg:hidden [&_svg]:open:rotate-90">
       <summary
         class:list={[
-          'type-control flex cursor-pointer items-center gap-2 rounded-full border-2 px-4 py-2',
-          overlay ? 'border-white/50 text-white' : 'border-ink-900/20',
+          'type-control flex cursor-pointer items-center gap-2 rounded-full border-2 px-4 py-2 transition',
+          overlay
+            ? 'border-white/50 text-white group-data-scrolled:border-ink-900/20 group-data-scrolled:text-ink-900'
+            : 'border-ink-900/20',
         ]}
       >
         Menu
@@ -86,3 +91,18 @@ const path = Astro.url.pathname;
     </details>
   </div>
 </header>
+
+{overlay && (
+  <script>
+    // The sentinel is a strip at the very top of the document. Once it leaves
+    // the viewport the header has travelled off the hero, so it takes the sand
+    // bar. An observer rather than a scroll handler: no work on every frame.
+    const header = document.querySelector('[data-overlay-header]');
+    const sentinel = document.querySelector('[data-header-sentinel]');
+    if (header && sentinel) {
+      new IntersectionObserver(
+        ([entry]) => header.toggleAttribute('data-scrolled', !entry.isIntersecting),
+      ).observe(sentinel);
+    }
+  </script>
+)}
