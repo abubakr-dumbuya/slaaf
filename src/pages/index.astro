@@ -120,7 +120,7 @@ const pillars = [
           <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
             {merch.map((product) => (
               <li>
-                <a href="/apparel" class="group flex h-full flex-col">
+                <a href="/apparel" class="group block">
                   {product.image && (
                     <div class="overflow-hidden rounded-2xl">
                       <img
@@ -135,12 +135,12 @@ const pillars = [
                     </div>
                   )}
                   <p class="type-label mt-3 text-ink-700">{product.title}</p>
+                  <p class="type-label mt-1 text-ink-800">
+                    {formatPrice(product.price, SHOP.currency)}
+                  </p>
                   {product.blurb && (
                     <p class="mt-2 text-sm leading-relaxed text-ink-600">{product.blurb}</p>
                   )}
-                  <p class="type-label mt-auto pt-2 text-ink-800">
-                    {formatPrice(product.price, SHOP.currency)}
-                  </p>
                 </a>
               </li>
             ))}

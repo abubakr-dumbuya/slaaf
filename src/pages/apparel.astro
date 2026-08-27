@@ -30,7 +30,7 @@ const shopUrl = collectionUrl(SHOP);
       <ul class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {products.map((product) => (
           <li>
-            <a href={product.url} class="group flex h-full flex-col" target="_blank" rel="noopener noreferrer">
+            <a href={product.url} class="group block" target="_blank" rel="noopener noreferrer">
               {product.image && (
                 <div class="overflow-hidden rounded-2xl">
                   {/*
@@ -51,13 +51,13 @@ const shopUrl = collectionUrl(SHOP);
                 </div>
               )}
               <h3 class="mt-4 text-lg transition group-hover:text-leone-600">{product.title}</h3>
-              {product.blurb && (
-                <p class="mt-2 text-sm leading-relaxed text-ink-600">{product.blurb}</p>
-              )}
-              <p class="mt-auto flex items-center gap-3 pt-3">
+              <p class="mt-1 flex items-center gap-3">
                 <span class="type-label text-ink-800">{formatPrice(product.price, SHOP.currency)}</span>
                 {!product.available && <span class="type-label text-ink-400">Sold out</span>}
               </p>
+              {product.blurb && (
+                <p class="mt-2 text-sm leading-relaxed text-ink-600">{product.blurb}</p>
+              )}
             </a>
           </li>
         ))}
