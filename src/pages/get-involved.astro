@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
-import PageHeader from '../components/PageHeader.astro';
+import PhotoHero from '../components/PhotoHero.astro';
+import flagTag from '../assets/photos/flag-tag.jpg';
 import RegistrationForm from '../components/RegistrationForm.astro';
 
 const notes = [
@@ -15,16 +16,27 @@ const notes = [
 <Base
   title="Get involved"
   description="Play, coach, officiate or volunteer with the Sierra Leone Authority of American Football — open to Sierra Leoneans at home and anywhere in the world."
+  headerOverlay
 >
-  <PageHeader title="Get involved">
-    {/* Two CSS columns rather than a grid, so the list still reads top to
-        bottom down the first column before continuing in the second. */}
-    <ul class="mt-8 list-disc space-y-3 pl-5 marker:text-leone-500 md:columns-2 md:gap-12 md:space-y-0">
-      {notes.map((note) => (
-        <li class="mb-3 break-inside-avoid leading-relaxed text-ink-700">{note}</li>
-      ))}
-    </ul>
-  </PageHeader>
+  <PhotoHero
+    photo={flagTag}
+    alt="A SLAAF player reaching for an opponent's flag during a flag football game in Freetown"
+    position="center 45%"
+  >
+    <h1 class="hero-title">Get involved</h1>
+  </PhotoHero>
+
+  <section class="border-b border-ink-900/10 bg-sand-100">
+    <div class="container-page py-14">
+      {/* Two CSS columns rather than a grid, so the list still reads top to
+          bottom down the first column before continuing in the second. */}
+      <ul class="list-disc space-y-3 pl-5 marker:text-leone-500 md:columns-2 md:gap-12 md:space-y-0">
+        {notes.map((note) => (
+          <li class="mb-3 break-inside-avoid leading-relaxed text-ink-700">{note}</li>
+        ))}
+      </ul>
+    </div>
+  </section>
 
   <section class="container-page py-16">
     <h2 class="text-3xl sm:text-4xl">Register your interest</h2>

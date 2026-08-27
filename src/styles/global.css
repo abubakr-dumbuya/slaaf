@@ -120,6 +120,17 @@
     @apply font-display font-black uppercase tracking-tight;
     font-stretch: var(--display-stretch);
   }
+  /* Title set over a photograph. The halo is three unoffset passes so the
+     darkening reads as a ring around the letters rather than a drop shadow
+     under them: tight for edge definition, mid for weight, wide to lift the
+     block off bright ground. */
+  .hero-title {
+    @apply text-4xl leading-[0.95] text-white lg:text-5xl;
+    text-shadow:
+      0 0 2px rgb(20 21 15 / 0.65),
+      0 0 14px rgb(20 21 15 / 0.75),
+      0 0 44px rgb(20 21 15 / 0.85);
+  }
   .prose-body {
     @apply text-lg leading-relaxed text-ink-700;
   }

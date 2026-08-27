@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import { Image } from 'astro:assets';
+import PhotoHero from '../components/PhotoHero.astro';
 import { fetchCollection, formatPrice, SHOP } from '../lib/shop';
 import huddle from '../assets/photos/huddle.jpg';
 
@@ -38,35 +38,18 @@ const pillars = [
   description="Sierra Leone Authority of American Football (SLAAF) — the national governing body for tackle and flag football, building the game at home and across the diaspora."
   headerOverlay
 >
-  <!-- Hero. The photo fills the section and the copy sits over it, so the
-       accent switches from atlantic blue to leone green: blue at this weight
-       does not hold up against a dark photograph. -->
-  <section class="relative isolate flex min-h-[30rem] flex-col overflow-hidden bg-ink-950 sm:min-h-[34rem] lg:min-h-[40rem]">
-    <Image
-      src={huddle}
-      alt="SLAAF players and coaches in a huddle with hands raised, on a pitch in Freetown"
-      widths={[640, 1024, 1536, 2000]}
-      sizes="100vw"
-      loading="eager"
-      fetchpriority="high"
-      class="absolute inset-0 -z-10 h-full w-full object-cover object-[center_18%]"
-    />
-    {/* Scrim, top only: enough to carry the white logo and nav, fading out
-        below the header so the photograph reads as itself. */}
-    <div class="absolute inset-x-0 top-0 -z-10 h-40 bg-gradient-to-b from-ink-950/88 via-ink-950/50 to-transparent"></div>
-
-    {/* The band carries its own gradient rather than one sized in rem, so it
-        tracks the headline's height at every breakpoint instead of being
-        re-guessed whenever the type scale or the wording changes. */}
-    <div class="mt-auto bg-gradient-to-t from-ink-950/92 via-ink-950/82 via-45% to-transparent pt-24">
-      <div class="container-page pb-16 lg:pb-20">
-        <h1 class="max-w-4xl text-4xl leading-[0.95] text-white [text-shadow:0_0_2px_rgb(20_21_15/0.65),0_0_14px_rgb(20_21_15/0.75),0_0_44px_rgb(20_21_15/0.85)] lg:text-5xl">
-          American Football
-          <span class="mt-2 block">Has Arrived in <span class="text-leone-300">Sierra Leone</span></span>
-        </h1>
-      </div>
-    </div>
-  </section>
+  <PhotoHero
+    photo={huddle}
+    alt="SLAAF players and coaches in a huddle with hands raised, on a pitch in Freetown"
+    position="center 18%"
+  >
+    {/* Accent is leone green rather than atlantic blue: blue at this weight
+        does not hold up against a dark photograph. */}
+    <h1 class="hero-title max-w-4xl">
+      American Football
+      <span class="mt-2 block">Has Arrived in <span class="text-leone-300">Sierra Leone</span></span>
+    </h1>
+  </PhotoHero>
 
   <!-- Ways to get involved -->
   <section class="border-y border-ink-900/10 bg-sand-100">

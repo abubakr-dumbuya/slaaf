@@ -1,0 +1,42 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+  photo: ImageMetadata;
+  alt: string;
+  /**
+   * CSS object-position for the crop. Worth setting per photograph: the
+   * default centre crop usually takes a band through the middle of the frame
+   * and cuts heads off. Only the vertical half matters at desktop widths; at
+   * phone widths the section is taller than it is wide, so the image overflows
+   * horizontally instead and the horizontal half takes over.
+   */
+  position?: string;
+}
+const { photo, alt, position = 'center' } = Astro.props;
+---
+<section class="relative isolate flex min-h-[30rem] flex-col overflow-hidden bg-ink-950 sm:min-h-[34rem] lg:min-h-[40rem]">
+  <Image
+    src={photo}
+    alt={alt}
+    widths={[640, 1024, 1536, 2000]}
+    sizes="100vw"
+    loading="eager"
+    fetchpriority="high"
+    class="absolute inset-0 -z-10 h-full w-full object-cover"
+    style={`object-position: ${position}`}
+  />
+
+  {/* Scrim, top only: enough to carry the white logo and nav, fading out
+      below the header so the photograph reads as itself. */}
+  <div class="absolute inset-x-0 top-0 -z-10 h-40 bg-gradient-to-b from-ink-950/88 via-ink-950/50 to-transparent"></div>
+
+  {/* The band carries its own gradient rather than one sized in rem, so it
+      tracks the title's height at every breakpoint instead of being re-guessed
+      whenever the type scale or the wording changes. */}
+  <div class="mt-auto bg-gradient-to-t from-ink-950/92 via-ink-950/82 via-45% to-transparent pt-24">
+    <div class="container-page pb-16 lg:pb-20">
+      <slot />
+    </div>
+  </div>
+</section>

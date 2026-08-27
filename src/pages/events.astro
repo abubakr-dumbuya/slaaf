@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
-import PageHeader from '../components/PageHeader.astro';
+import PhotoHero from '../components/PhotoHero.astro';
+import huddle from '../assets/photos/huddle.jpg';
 import { fetchUpcoming, linkify } from '../lib/calendar';
 
 // Read live so a newly added event appears without a rebuild.
@@ -50,11 +51,24 @@ const zoneLabel = (date: Date, tz: string) =>
 <Base
   title="Upcoming events"
   description="Combines, trials, training sessions and fixtures from the Sierra Leone Authority of American Football."
+  headerOverlay
 >
-  <PageHeader
-    title="Upcoming events"
-    lede="Everything coming up — combines, trials, fixtures and gatherings. Times are shown in your local time."
-  />
+  <PhotoHero
+    photo={huddle}
+    alt="SLAAF players and coaches in a huddle with hands raised, on a pitch in Freetown"
+    position="center 18%"
+  >
+    <h1 class="hero-title">Upcoming events</h1>
+  </PhotoHero>
+
+  <section class="border-b border-ink-900/10 bg-sand-100">
+    <div class="container-page py-10">
+      <p class="prose-body">
+        Everything coming up — combines, trials, fixtures and gatherings. Times
+        are shown in your local time.
+      </p>
+    </div>
+  </section>
 
   <section class="container-page py-16">
     {events && events.length > 0 && (
