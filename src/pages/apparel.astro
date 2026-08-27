@@ -20,19 +20,12 @@ const shopUrl = collectionUrl(SHOP);
   />
 
   <section class="container-page py-16">
-    <div class="flex flex-wrap items-end justify-between gap-6">
-      <div>
-        <h2 class="text-3xl sm:text-4xl">The collection</h2>
-        <p class="prose-body mt-4 max-w-2xl">
-          Made with <a href={`https://${SHOP.domain}`} class="text-leone-700 underline"
-            target="_blank" rel="noopener noreferrer">FAMBUL</a>. Every item is
-          presale, with shipping expected in late 2026.
-        </p>
-      </div>
-      <a href={shopUrl} class="btn btn-ghost" target="_blank" rel="noopener noreferrer">
-        View the full collection
-      </a>
-    </div>
+    <h2 class="text-3xl sm:text-4xl">The collection</h2>
+    <p class="prose-body mt-4 max-w-2xl">
+      Made with <a href={`https://${SHOP.domain}`} class="text-leone-700 underline"
+        target="_blank" rel="noopener noreferrer">FAMBUL</a>. Every item is
+      presale, with shipping expected in late 2026.
+    </p>
 
     {products && products.length > 0 && (
       <ul class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
@@ -85,9 +78,14 @@ const shopUrl = collectionUrl(SHOP);
       </p>
     )}
 
-    <p class="mt-10 text-sm text-ink-500">
-      Purchases are handled by FAMBUL on Shopify. SLAAF never sees your card details.
-    </p>
+    <div class="mt-14 text-center">
+      <a href={shopUrl} class="btn btn-ghost" target="_blank" rel="noopener noreferrer">
+        View the full collection
+      </a>
+      <p class="mt-6 text-sm text-ink-500">
+        Purchases are handled by FAMBUL on Shopify. SLAAF never sees your card details.
+      </p>
+    </div>
   </section>
 
   <Placeholder need="Still to add to this page: direct donations, sponsorship tiers and a prospectus for partners, and confirmation of which legal entity receives funds. Also outstanding — what share of each sale reaches SLAAF, which is the first thing a supporter will want to know." />
