@@ -37,6 +37,24 @@ developer, or open an issue describing the change you want.
 
 ## Images
 
-Put images in `public/` and reference them as `/my-image.jpg`. Please resize
-photographs to no more than 2000px on the long edge before adding them, so pages
-stay fast for people on mobile data.
+**Colour.** Headshots of board and advisory members are greyscale. Action and
+football photography is left in its original colour — the pitch, the kit and the
+flag are the point of those pictures, and draining them would throw that away.
+The two treatments sit apart on purpose: a portrait is a cut-out of a person, an
+action shot is a scene.
+
+**Where they go.** On-page photographs belong in `src/assets/`, imported and
+rendered through Astro's `<Image>` component. Astro then resizes them, converts
+them to WebP and serves a sharper file to retina screens, all at build time. An
+image dropped in `public/` skips every one of those steps and is sent to phones
+at full weight.
+
+`public/` is right for one thing only: `og-default.jpg`, the preview image social
+networks show when the site is shared. That needs a stable, unhashed URL, which
+is exactly what `public/` gives it.
+
+**Size.** Supply photographs at around 2400px on the long edge for anything
+full-width and 1200px for anything in a card. Astro scales down from there, so
+larger sources are fine and cost nothing at run time — but it cannot invent
+detail that is not in the file, and an undersized photo looks soft on a modern
+screen.
