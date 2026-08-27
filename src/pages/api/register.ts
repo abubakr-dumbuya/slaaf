@@ -111,6 +111,8 @@ export const POST: APIRoute = async ({ request }) => {
     connection: d.connection,
     residency: d.residency,
     residencyCountry: d.residencyCountry ? (normaliseCountry(d.residencyCountry) ?? d.residencyCountry) : '',
+    enrolment: d.enrolment,
+    schoolSport: d.schoolSport ?? '',
     background: d.background,
     interests: d.interests,
     position: d.position || '',

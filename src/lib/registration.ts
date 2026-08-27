@@ -48,6 +48,19 @@ export const RESIDENCY = [
 /** The option that means no country outside Sierra Leone applies. */
 export const RESIDENCY_NONE = RESIDENCY[0];
 
+/**
+ * Whether the applicant is in full-time education. Schools and universities
+ * are one of the pathways in the Constitution, so this decides who a combine
+ * invitation has to be routed through.
+ */
+export const ENROLMENT = ['High school', 'College or university', 'No'] as const;
+
+/** The option that means no school or college applies. */
+export const ENROLMENT_NONE = ENROLMENT[2];
+
+/** Asked only of those still in education. */
+export const SCHOOL_SPORT = ['Yes', 'No'] as const;
+
 export const BACKGROUNDS = [
   'American football (tackle)',
   'Flag football',
@@ -82,6 +95,8 @@ export const registrationSchema = z
     connection: z.enum(CONNECTIONS, { message: 'Please choose one option.' }),
     residency: z.enum(RESIDENCY, { message: 'Please choose one option.' }),
     residencyCountry: z.string().trim().max(80).optional().or(z.literal('')),
+    enrolment: z.enum(ENROLMENT, { message: 'Please choose one option.' }),
+    schoolSport: z.enum(SCHOOL_SPORT).optional().or(z.literal('')),
     background: z.enum(BACKGROUNDS, { message: 'Please choose one option.' }),
     interests: z.array(z.enum(INTERESTS)).min(1, 'Please choose at least one.'),
     position: z.string().trim().max(120).optional().or(z.literal('')),
@@ -128,6 +143,16 @@ export const registrationSchema = z
           message: 'Please give a parent or guardian phone number.',
         });
       }
+    }
+  })
+  .superRefine((data, ctx) => {
+    // The school-sport question only exists for those still in education.
+    if (data.enrolment !== ENROLMENT_NONE && !data.schoolSport) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['schoolSport'],
+        message: 'Please choose one option.',
+      });
     }
   })
   .superRefine((data, ctx) => {
@@ -186,6 +211,8 @@ export interface RegistrationPayload {
   connection: string;
   residency: string;
   residencyCountry: string;
+  enrolment: string;
+  schoolSport: string;
   background: string;
   interests: string[];
   position: string;
@@ -237,6 +264,7 @@ function rows(p: RegistrationPayload): Array<[string, string]> {
   out.push(
     ['Connection to Sierra Leone', p.connection],
     ['Citizenship / residency outside SL', p.residencyCountry ? `${p.residency} (${p.residencyCountry})` : p.residency],
+    ['In education', p.schoolSport ? `${p.enrolment} (plays for a school team: ${p.schoolSport})` : p.enrolment],
     ['Sporting background', p.background],
     ['Interested in', p.interests.join(', ')],
     ['Position', p.position || '—'],

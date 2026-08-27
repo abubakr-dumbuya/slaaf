@@ -1,5 +1,5 @@
 ---
-import { INTERESTS, CONNECTIONS, BACKGROUNDS, SEXES, RESIDENCY, RESIDENCY_NONE, POSITION_GROUPS, MIN_AGE } from '../lib/registration';
+import { INTERESTS, CONNECTIONS, BACKGROUNDS, SEXES, RESIDENCY, RESIDENCY_NONE, ENROLMENT, ENROLMENT_NONE, SCHOOL_SPORT, POSITION_GROUPS, MIN_AGE } from '../lib/registration';
 import { COUNTRY_OPTIONS } from '../lib/countries';
 
 const field = 'w-full rounded-lg border-2 border-ink-900/15 bg-white px-4 py-3 text-ink-900 transition placeholder:text-ink-400 focus:border-leone-500 focus:outline-none';
@@ -117,6 +117,27 @@ const err = 'mt-1 text-sm font-medium text-red-700';
           autocomplete="off" placeholder="Start typing…" disabled
         />
         <p class={err} data-error="residencyCountry" hidden></p>
+      </div>
+
+      <div>
+        <label class={label} for="enrolment">Are you in high school or college?</label>
+        <select class={`${field} mt-2`} id="enrolment" name="enrolment" required data-none={ENROLMENT_NONE}>
+          <option value="">Choose one…</option>
+          {ENROLMENT.map((e) => <option value={e}>{e}</option>)}
+        </select>
+        <p class={err} data-error="enrolment" hidden></p>
+      </div>
+
+      <div id="school-sport-wrap" class="opacity-50 transition-opacity">
+        <label class={label} for="schoolSport">Do you play a sport for your school or college team?</label>
+        <select
+          class={`${field} mt-2 disabled:cursor-not-allowed disabled:border-ink-900/10 disabled:bg-sand-100 disabled:text-ink-400`}
+          id="schoolSport" name="schoolSport" disabled
+        >
+          <option value="">Choose one…</option>
+          {SCHOOL_SPORT.map((o) => <option value={o}>{o}</option>)}
+        </select>
+        <p class={err} data-error="schoolSport" hidden></p>
       </div>
 
       <div>
@@ -311,6 +332,22 @@ const err = 'mt-1 text-sm font-medium text-red-700';
     };
     residency.addEventListener('change', syncResidency);
     syncResidency();
+
+    // Same shape as the residency pair: the follow-up only applies to those
+    // still in education, and must not carry a stale answer if that changes.
+    const enrolment = form.querySelector<HTMLSelectElement>('#enrolment')!;
+    const schoolSportWrap = document.getElementById('school-sport-wrap') as HTMLElement;
+    const NO_SCHOOL = enrolment.dataset.none;
+    const schoolSport = form.querySelector<HTMLSelectElement>('#schoolSport')!;
+    const syncEnrolment = () => {
+      const applies = enrolment.value !== '' && enrolment.value !== NO_SCHOOL;
+      schoolSport.disabled = !applies;
+      schoolSport.required = applies;
+      schoolSportWrap.classList.toggle('opacity-50', !applies);
+      if (!applies) schoolSport.value = '';
+    };
+    enrolment.addEventListener('change', syncEnrolment);
+    syncEnrolment();
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
