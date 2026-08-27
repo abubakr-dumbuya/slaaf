@@ -1,0 +1,45 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+  name: string;
+  role?: string;
+  /** Imported portrait, or undefined until one is supplied. */
+  photo?: ImageMetadata;
+  accent?: 'leone' | 'atlantic';
+}
+const { name, role, photo, accent = 'leone' } = Astro.props;
+
+/** Initials stand in for a missing portrait — a grey box says nothing. */
+const initials = name
+  .replace(/,.*$/, '')
+  .split(/\s+/)
+  .filter(Boolean)
+  .slice(0, 2)
+  .map((part) => part[0])
+  .join('')
+  .toUpperCase();
+
+const rule = accent === 'atlantic' ? 'bg-atlantic-600' : 'bg-leone-500';
+---
+<div>
+  <div class:list={['aspect-square overflow-hidden rounded-2xl', photo ? 'bg-white' : 'bg-sand-300']}>
+    {photo ? (
+      <Image
+        src={photo}
+        alt={`Portrait of ${name}`}
+        width={600}
+        height={600}
+        densities={[1, 2]}
+        class="h-full w-full object-cover"
+      />
+    ) : (
+      <div class="flex h-full w-full items-center justify-center" aria-hidden="true">
+        <span class="type-numeral text-5xl text-ink-400">{initials}</span>
+      </div>
+    )}
+  </div>
+  <div class:list={['mt-4 h-1 w-10 rounded-full', rule]}></div>
+  <p class="type-title mt-3 text-lg">{name}</p>
+  {role && <p class="mt-1 text-ink-600">{role}</p>}
+</div>

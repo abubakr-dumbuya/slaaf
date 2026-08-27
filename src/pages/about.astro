@@ -2,6 +2,23 @@
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
 import Placeholder from '../components/Placeholder.astro';
+import Person from '../components/Person.astro';
+
+import hafsa from '../assets/people/hafsa-kamara.jpg';
+import abubakr from '../assets/people/abubakr-dumbuya.jpg';
+import musu from '../assets/people/musu-konteh.jpg';
+import clifford from '../assets/people/clifford-kamara.jpg';
+import thierno from '../assets/people/thierno-diallo.jpg';
+
+// Keyed by the name as it appears in the lists below. Anyone without a
+// portrait yet renders their initials rather than an empty frame.
+const portraits: Record<string, ImageMetadata> = {
+  'Hafsatu Kamara, OLY': hafsa,
+  'Abubakr Dumbuya': abubakr,
+  'Musu Konteh': musu,
+  'Clifford Kamara': clifford,
+  'Thierno Diallo': thierno,
+};
 
 // Sourced from the SLAAF Constitution (2025, amended 28 January 2026), the
 // Executive Board Charter, and the Register of Current Executive Board
@@ -82,21 +99,16 @@ const bodies = [
       <h2 class="text-3xl sm:text-4xl">Executive Board</h2>
       <p class="mt-4 text-ink-600">Term 2025&ndash;2029</p>
 
-      <ul class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      <ul class="mt-12 grid grid-cols-2 gap-8 lg:grid-cols-4">
         {executive.map((p) => (
-          <li class="border-t-4 border-leone-500 pt-5">
-            <p class="type-title text-xl">{p.name}</p>
-            <p class="mt-1 text-ink-600">{p.role}</p>
-          </li>
+          <li><Person name={p.name} role={p.role} photo={portraits[p.name]} /></li>
         ))}
       </ul>
 
       <h2 class="mt-20 text-3xl sm:text-4xl">Advisory Board</h2>
-      <ul class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      <ul class="mt-12 grid grid-cols-2 gap-8 lg:grid-cols-4">
         {advisory.map((name) => (
-          <li class="border-t-4 border-atlantic-600 pt-5">
-            <p class="type-title text-xl">{name}</p>
-          </li>
+          <li><Person name={name} photo={portraits[name]} accent="atlantic" /></li>
         ))}
       </ul>
     </div>
@@ -162,5 +174,5 @@ const bodies = [
     </dl>
   </section>
 
-  <Placeholder need="Still needed for this page: the date SLAAF was founded, portrait photographs of board members, and confirmation of any international federation membership (nothing on this page claims IFAF affiliation, because no source document establishes it)." />
+  <Placeholder need="Still needed for this page: the date SLAAF was founded, the treated black-and-white portraits for each board member, and confirmation of any international federation membership (nothing on this page claims IFAF affiliation, because no source document establishes it)." />
 </Base>

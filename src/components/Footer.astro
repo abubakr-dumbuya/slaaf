@@ -1,4 +1,7 @@
 ---
+import { Image } from 'astro:assets';
+import logo from '../assets/slaaf-logo.png';
+
 const year = new Date().getFullYear();
 /** The federation's public address, also where registrations are delivered. */
 const EMAIL = 'info@slaaf.org';
@@ -20,7 +23,13 @@ const columns = [
   <div class="container-page py-16">
     <div class="grid gap-12 md:grid-cols-[1.4fr_repeat(2,1fr)]">
       <div>
-        <p class="type-title text-3xl">SLAAF</p>
+        <Image
+          src={logo}
+          alt="Sierra Leone Authority of American Football"
+          height={48}
+          densities={[1, 2]}
+          class="h-11 w-auto brightness-0 invert"
+        />
         <p class="mt-2 max-w-xs text-sm leading-relaxed text-ink-300">
           Sierra Leone Authority of American Football (SLAAF) — the national
           governing body for tackle and flag football in Sierra Leone.
