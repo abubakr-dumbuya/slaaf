@@ -41,7 +41,7 @@ const zoneLabel = (date: Date, tz: string) =>
 >
   <PageHeader
     title="Upcoming events"
-    lede="Everything coming up — combines, trials, fixtures and gatherings. Each event is shown in its own local time."
+    lede="Everything coming up — combines, trials, fixtures and gatherings. Times are shown in your local time."
   />
 
   <section class="container-page py-16">
@@ -50,14 +50,25 @@ const zoneLabel = (date: Date, tz: string) =>
         {events.map((event) => (
           <li class="bg-sand-100 p-6 sm:p-8">
             <div class="flex flex-col gap-6 sm:flex-row sm:items-start">
-              <div class="flex shrink-0 flex-col items-center justify-center rounded-xl bg-ink-950 px-5 py-4 text-white sm:w-24">
-                <span class="type-label text-leone-400">{monthFmt(zoneOf(event)).format(event.start)}</span>
-                <span class="type-numeral text-3xl leading-none">{dateFmt(zoneOf(event)).format(event.start)}</span>
+              <div
+                class="flex shrink-0 flex-col items-center justify-center rounded-xl bg-ink-950 px-5 py-4 text-white sm:w-24"
+                data-badge
+                data-start={event.start.toISOString()}
+                data-all-day={String(event.allDay)}
+              >
+                <span class="type-label text-leone-400" data-month>{monthFmt(zoneOf(event)).format(event.start)}</span>
+                <span class="type-numeral text-3xl leading-none" data-day>{dateFmt(zoneOf(event)).format(event.start)}</span>
               </div>
 
               <div class="min-w-0">
                 <h2 class="text-2xl">{event.summary}</h2>
-                <p class="mt-2 text-ink-700">
+                <p
+                  class="mt-2 text-ink-700"
+                  data-when
+                  data-start={event.start.toISOString()}
+                  data-end={event.end ? event.end.toISOString() : ''}
+                  data-all-day={String(event.allDay)}
+                >
                   <time datetime={event.start.toISOString()}>{dayFmt(zoneOf(event)).format(event.start)}</time>
                   {!event.allDay && (
                     <span>
@@ -119,3 +130,60 @@ const zoneLabel = (date: Date, tz: string) =>
     <Placeholder need="The calendar could not be read. Check that GOOGLE_CALENDAR_ID is correct and that the calendar is set to public." />
   )}
 </Base>
+
+<script>
+  /**
+   * The server renders each event in the zone it was scheduled in, which is
+   * correct but not local to whoever is reading. Once JavaScript runs, rewrite
+   * the times in the visitor's own zone so a session in Freetown and a
+   * fundraiser in Seattle each read at the hour that visitor will experience.
+   *
+   * Without JavaScript the server-rendered times stand, so the page is never
+   * blank or wrong — just expressed in the organiser's zone instead.
+   *
+   * All-day events are dates, not instants, and are left alone: shifting them
+   * by a timezone would move an event to the wrong day.
+   */
+  const weekdayFmt = new Intl.DateTimeFormat('en-GB', { weekday: 'short' });
+  const restFmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  const formatDay = (d: Date) => `${weekdayFmt.format(d)}, ${restFmt.format(d)}`;
+  const timeFmt = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit' });
+  const zoneFmt = new Intl.DateTimeFormat('en-GB', {
+    hour: '2-digit', minute: '2-digit', timeZoneName: 'short',
+  });
+  const monthFmt = new Intl.DateTimeFormat('en-GB', { month: 'short' });
+  const dateFmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric' });
+
+  const zoneOf = (d: Date) =>
+    zoneFmt.formatToParts(d).find((p) => p.type === 'timeZoneName')?.value ?? '';
+
+  document.querySelectorAll<HTMLElement>('[data-badge]').forEach((el) => {
+    if (el.dataset.allDay === 'true') return;
+    const start = new Date(el.dataset.start!);
+    if (Number.isNaN(start.valueOf())) return;
+    el.querySelector<HTMLElement>('[data-month]')!.textContent = monthFmt.format(start);
+    el.querySelector<HTMLElement>('[data-day]')!.textContent = dateFmt.format(start);
+  });
+
+  document.querySelectorAll<HTMLElement>('[data-when]').forEach((el) => {
+    if (el.dataset.allDay === 'true') return;
+    const start = new Date(el.dataset.start!);
+    if (Number.isNaN(start.valueOf())) return;
+    const end = el.dataset.end ? new Date(el.dataset.end) : null;
+
+    const time = document.createElement('time');
+    time.dateTime = start.toISOString();
+    time.textContent = formatDay(start);
+
+    const rest = document.createElement('span');
+    const zone = document.createElement('span');
+    zone.className = 'text-ink-500';
+    zone.textContent = zoneOf(start);
+    const range = end && !Number.isNaN(end.valueOf())
+      ? `${timeFmt.format(start)} – ${timeFmt.format(end)} `
+      : `${timeFmt.format(start)} `;
+    rest.append(document.createTextNode(` · ${range}`), zone);
+
+    el.replaceChildren(time, rest);
+  });
+</script>
