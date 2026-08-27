@@ -1,5 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
+import { fetchCollection } from '../lib/shop';
+
+// Fetched at build time, so the homepage stays static and CDN-cached. Prices
+// are deliberately not shown here — /apparel reads them live, and a stale
+// price on the busiest page would be worse than none.
+const merch = (await fetchCollection())?.slice(0, 3) ?? [];
 
 const ways = [
   { title: 'Play', body: 'Combines, trials and national squads — flag and tackle, men and women.' },
@@ -91,4 +97,48 @@ const pillars = [
     </div>
   </section>
 
+  <!-- Apparel collaboration -->
+  <section class="border-t border-ink-900/10 bg-sand-100">
+    <div class="container-page py-20">
+      <div class="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-16">
+        <div>
+          <h2 class="text-3xl sm:text-4xl">SLAAF <span class="text-atlantic-600">&times;</span> FAMBUL</h2>
+          <p class="prose-body mt-5">
+            A capsule collection made with <a href="https://by.fambul.com" class="text-leone-700 underline"
+              target="_blank" rel="noopener noreferrer">FAMBUL</a>, the Sierra Leonean label. Kit for players
+            and supporters, and a way to put something behind the programme.
+          </p>
+          <p class="mt-4 leading-relaxed text-ink-700">
+            Every piece is presale, with shipping expected in late 2026.
+          </p>
+          <a href="/apparel" class="btn btn-primary mt-8">See the collection</a>
+        </div>
+
+        {merch.length > 0 && (
+          <ul class="grid grid-cols-3 gap-4 sm:gap-6">
+            {merch.map((product) => (
+              <li>
+                <a href="/apparel" class="group block">
+                  {product.image && (
+                    <div class="overflow-hidden rounded-2xl">
+                      <img
+                        src={product.image.src}
+                        alt={product.title}
+                        width={product.image.width}
+                        height={product.image.height}
+                        loading="lazy"
+                        decoding="async"
+                        class="aspect-square w-full object-cover mix-blend-multiply transition duration-300 group-hover:scale-[1.03]"
+                      />
+                    </div>
+                  )}
+                  <p class="type-label mt-3 text-ink-700">{product.title}</p>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  </section>
 </Base>
