@@ -1,10 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
-import { fetchCollection } from '../lib/shop';
+import { fetchCollection, formatPrice, SHOP } from '../lib/shop';
 
 // Fetched at build time, so the homepage stays static and CDN-cached. Prices
-// are deliberately not shown here — /apparel reads them live, and a stale
-// price on the busiest page would be worse than none.
+// therefore refresh on deploy rather than on request — /apparel renders on
+// demand and is the live figure if the two ever disagree.
 const FEATURED = ['slaaf-american-football-hoodie', 'slaaf-american-football-sleeveless-hoodie'];
 const all = (await fetchCollection()) ?? [];
 const merch = FEATURED.map((handle) => all.find((p) => p.handle === handle)).filter((p) => p !== undefined);
@@ -120,7 +120,7 @@ const pillars = [
           <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
             {merch.map((product) => (
               <li>
-                <a href="/apparel" class="group block">
+                <a href="/apparel" class="group flex h-full flex-col">
                   {product.image && (
                     <div class="overflow-hidden rounded-2xl">
                       <img
@@ -135,6 +135,12 @@ const pillars = [
                     </div>
                   )}
                   <p class="type-label mt-3 text-ink-700">{product.title}</p>
+                  {product.blurb && (
+                    <p class="mt-2 text-sm leading-relaxed text-ink-600">{product.blurb}</p>
+                  )}
+                  <p class="type-label mt-auto pt-2 text-ink-800">
+                    {formatPrice(product.price, SHOP.currency)}
+                  </p>
                 </a>
               </li>
             ))}
