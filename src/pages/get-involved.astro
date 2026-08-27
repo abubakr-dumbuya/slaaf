@@ -3,11 +3,11 @@ import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
 import RegistrationForm from '../components/RegistrationForm.astro';
 
-// Written once. Shown under the lede on mobile and tablet, and in the sidebar
-// from lg up, where there is a column to hold it.
 const notes = [
+  "We need players, coaches, officials and volunteers — in Sierra Leone and across the diaspora.",
   "Open to anyone 15 or over with a connection to Sierra Leone — by birth, or through a parent or grandparent — wherever you live.",
-  "No experience of American football needed. Under 18s will need a parent or guardian's details.",
+  "No experience of American football needed.",
+  "Under 18s will need a parent or guardian's details.",
   "Registrations go onto SLAAF's database: how we select for combines, training and squads, and how we staff events. We reply by email.",
 ];
 
@@ -16,15 +16,14 @@ const notes = [
   title="Get involved"
   description="Play, coach, officiate or volunteer with the Sierra Leone Authority of American Football — open to Sierra Leoneans at home and anywhere in the world."
 >
-  <PageHeader
-    title="Get involved"
-    lede="We need players, coaches, officials and volunteers — in Sierra Leone and across the diaspora."
-  >
-    <div class="mt-10 grid gap-8 md:grid-cols-3">
+  <PageHeader title="Get involved">
+    {/* Two CSS columns rather than a grid, so the list still reads top to
+        bottom down the first column before continuing in the second. */}
+    <ul class="mt-8 list-disc space-y-3 pl-5 marker:text-leone-500 md:columns-2 md:gap-12 md:space-y-0">
       {notes.map((note) => (
-        <p class="border-t-2 border-ink-900/15 pt-4 leading-relaxed text-ink-700">{note}</p>
+        <li class="mb-3 break-inside-avoid leading-relaxed text-ink-700">{note}</li>
       ))}
-    </div>
+    </ul>
   </PageHeader>
 
   <section class="container-page py-16">

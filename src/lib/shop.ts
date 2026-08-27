@@ -18,6 +18,8 @@ export interface ShopProduct {
   available: boolean;
   /** "Presale", "Hoodie" etc. — Shopify's product_type, where set. */
   type: string;
+  /** One-line garment description, empty when none is written for it. */
+  blurb: string;
 }
 
 export interface ShopConfig {
@@ -52,6 +54,28 @@ export function cleanTitle(title: string): string {
     .replace(/\s{2,}/g, ' ')
     .trim();
 }
+
+/**
+ * Short garment lines for the collection grid.
+ *
+ * These are condensed from FAMBUL's own product copy rather than parsed out of
+ * it: every description on Shopify opens with the same two paragraphs — what
+ * SLAAF is, and the presale shipping date — both of which this page already
+ * states, and what remains is a bare "T-shirt details:" or a sizing chart
+ * rather than a sentence. A product with no entry here simply shows no line.
+ */
+const BLURBS: Record<string, string> = {
+  'slaaf-american-football-hoodie':
+    'Super-soft 10 oz ring-spun cotton blend, with the Sierra Leone football logo embroidered across the front.',
+  'slaaf-american-football-sleeveless-hoodie':
+    'The same 10 oz ring-spun cotton blend, cut sleeveless, logo embroidered across the front.',
+  'slaaf-american-football-t-shirt':
+    'Lightweight 90% polyester and 10% elastane — moisture-wicking, quick-drying, with four-way stretch.',
+  'slaaf-american-football-reversible-bucket-hat':
+    'Reversible, in three sizes — cut to fit braids, locs and twists as well as shorter styles.',
+};
+
+export const blurbFor = (handle: string): string => BLURBS[handle] ?? '';
 
 export function formatPrice(amount: number, currency: string): string {
   return new Intl.NumberFormat('en-US', {
@@ -90,6 +114,7 @@ export function parseProducts(raw: unknown, shop: ShopConfig): ShopProduct[] {
       price: Math.min(...prices),
       available: variants.some((v) => v.available),
       type: p.product_type ?? '',
+      blurb: blurbFor(p.handle),
     }];
   });
 }
