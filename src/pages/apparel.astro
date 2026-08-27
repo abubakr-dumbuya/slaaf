@@ -1,7 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
-import Placeholder from '../components/Placeholder.astro';
 import { fetchCollection, collectionUrl, formatPrice, SHOP } from '../lib/shop';
 
 // Read live so price and stock changes in Shopify appear without a rebuild.
@@ -88,5 +87,4 @@ const shopUrl = collectionUrl(SHOP);
     </div>
   </section>
 
-  <Placeholder need="Still to add to this page: direct donations, sponsorship tiers and a prospectus for partners, and confirmation of which legal entity receives funds. Also outstanding — what share of each sale reaches SLAAF, which is the first thing a supporter will want to know." />
 </Base>

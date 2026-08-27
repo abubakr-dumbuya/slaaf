@@ -1,7 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
-import Placeholder from '../components/Placeholder.astro';
 import { fetchUpcoming, linkify } from '../lib/calendar';
 
 // Read live so a newly added event appears without a rebuild.
@@ -116,15 +115,15 @@ const zoneLabel = (date: Date, tz: string) =>
       <p class="prose-body">No upcoming events.</p>
     )}
 
+    {events === null && (
+      <p class="prose-body">
+        Events could not be loaded just now. Please try again shortly.
+      </p>
+    )}
+
   </section>
 
-  {!calendarId && (
-    <Placeholder need="No calendar is connected yet. Set GOOGLE_CALENDAR_ID to the ID of a public Google Calendar and events will appear here automatically — see README.md." />
-  )}
 
-  {calendarId && events === null && (
-    <Placeholder need="The calendar could not be read. Check that GOOGLE_CALENDAR_ID is correct and that the calendar is set to public." />
-  )}
 </Base>
 
 <script>
