@@ -7,21 +7,21 @@ const year = new Date().getFullYear();
 const EMAIL = 'info@slaaf.org';
 
 const columns = [
-  { title: 'The Authority', links: [
-    { href: '/about', label: 'About SLAAF' },
-    { href: '/about#governance', label: 'Governance' },
-    { href: `mailto:${EMAIL}`, label: 'Contact' },
-  ]},
   { title: 'Football', links: [
     { href: '/get-involved', label: 'Get involved' },
     { href: '/events', label: 'Upcoming events' },
     { href: '/apparel', label: 'Apparel' },
   ]},
+  { title: 'The Authority', links: [
+    { href: '/about', label: 'About SLAAF' },
+    { href: '/about#governance', label: 'Governance' },
+    { href: `mailto:${EMAIL}`, label: 'Contact' },
+  ]},
 ];
 ---
 <footer class="bg-ink-950 text-sand-100">
   <div class="container-page py-16">
-    <div class="grid gap-12 md:grid-cols-[1.4fr_repeat(2,1fr)]">
+    <div class="grid gap-12 md:grid-cols-[1.4fr_1.2fr]">
       <div>
         <Image
           src={logo}
@@ -35,18 +35,20 @@ const columns = [
           governing body for tackle and flag football in Sierra Leone.
         </p>
       </div>
-      {columns.map((col) => (
-        <div>
-          <h2 class="type-label-xs text-leone-400">{col.title}</h2>
-          <ul class="mt-4 space-y-2">
-            {col.links.map((l) => (
-              <li>
-                <a href={l.href} class="text-sm text-ink-200 transition hover:text-white">{l.label}</a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+      <div class="grid grid-cols-2 gap-8">
+        {columns.map((col) => (
+          <div>
+            <h2 class="type-label-xs text-leone-400">{col.title}</h2>
+            <ul class="mt-4 space-y-2">
+              {col.links.map((l) => (
+                <li>
+                  <a href={l.href} class="text-sm text-ink-200 transition hover:text-white">{l.label}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
     </div>
 
     <div class="mt-14 flex flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
