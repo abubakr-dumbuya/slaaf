@@ -51,16 +51,12 @@ const pillars = [
       fetchpriority="high"
       class="absolute inset-0 -z-10 h-full w-full object-cover object-[center_18%]"
     />
-    {/* Scrim. Below lg the copy spans the full column width, so it needs an
-        even wash; from lg it sits in the left third and a horizontal gradient
-        keeps more of the photograph visible. Measured against the brightest
-        pixels behind the text rather than eyeballed. */}
-    <div class="absolute inset-0 -z-10 bg-ink-950/65 lg:hidden"></div>
-    <div class="absolute inset-0 -z-10 hidden bg-gradient-to-r from-ink-950/90 via-ink-950/72 to-ink-950/35 lg:block"></div>
-    <div class="absolute inset-0 -z-10 bg-gradient-to-t from-ink-950/60 via-transparent to-ink-950/25"></div>
+    {/* Scrim, top only: enough to carry the white logo and nav, fading out
+        below the header so the photograph reads as itself. */}
+    <div class="absolute inset-x-0 top-0 -z-10 h-40 bg-gradient-to-b from-ink-950/88 via-ink-950/50 to-transparent"></div>
 
     <div class="container-page flex min-h-[30rem] flex-col justify-end py-16 sm:min-h-[34rem] lg:min-h-[40rem] lg:py-20">
-      <h1 class="max-w-4xl text-4xl leading-[0.95] text-white lg:text-5xl">
+      <h1 class="max-w-4xl text-4xl leading-[0.95] text-white [text-shadow:0_1px_3px_rgb(20_21_15/0.7),0_4px_26px_rgb(20_21_15/0.9)] lg:text-5xl">
         American Football
         <span class="mt-2 block">Has Arrived in <span class="text-leone-400">Sierra Leone</span></span>
       </h1>
