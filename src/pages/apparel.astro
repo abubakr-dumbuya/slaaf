@@ -16,7 +16,7 @@ const shopUrl = collectionUrl(SHOP);
 >
   <PageHeader
     title="Apparel"
-    lede="Wear the badge and back the programme. Made with FAMBUL, for players and supporters from Freetown to the diaspora."
+    lede="Carry Salone with you. The FAMBUL x SLAAF collection, for players and supporters wherever they are."
   />
 
   <section class="container-page py-16">
@@ -35,7 +35,7 @@ const shopUrl = collectionUrl(SHOP);
     </div>
 
     {products && products.length > 0 && (
-      <ul class="mt-12 grid grid-cols-2 gap-6 sm:gap-8 lg:grid-cols-4">
+      <ul class="mt-12 grid gap-8 sm:grid-cols-2 sm:gap-10">
         {products.map((product) => (
           <li>
             <a href={product.url} class="group block" target="_blank" rel="noopener noreferrer">
