@@ -5,7 +5,9 @@ import { fetchCollection } from '../lib/shop';
 // Fetched at build time, so the homepage stays static and CDN-cached. Prices
 // are deliberately not shown here — /apparel reads them live, and a stale
 // price on the busiest page would be worse than none.
-const merch = (await fetchCollection())?.slice(0, 3) ?? [];
+const FEATURED = ['slaaf-american-football-hoodie', 'slaaf-american-football-sleeveless-hoodie'];
+const all = (await fetchCollection()) ?? [];
+const merch = FEATURED.map((handle) => all.find((p) => p.handle === handle)).filter((p) => p !== undefined);
 
 const ways = [
   { title: 'Play', body: 'Combines, trials and national squads — flag and tackle, men and women.' },
@@ -36,9 +38,9 @@ const pillars = [
   <!-- Hero -->
   <section class="relative overflow-hidden">
     <div class="container-page pt-12 pb-14 sm:pt-16 sm:pb-16">
-      <h1 class="text-5xl leading-[0.92] sm:text-7xl lg:text-8xl">
-        Salone Gridiron
-        <span class="mt-2 block text-atlantic-600">is here.</span>
+      <h1 class="text-4xl leading-[0.95] sm:text-6xl lg:text-7xl">
+        American Football
+        <span class="mt-2 block text-atlantic-600">Has Arrived in Sierra Leone</span>
       </h1>
 
       <p class="prose-body mt-8">
@@ -105,8 +107,8 @@ const pillars = [
           <h2 class="text-3xl sm:text-4xl">SLAAF <span class="text-atlantic-600">&times;</span> FAMBUL</h2>
           <p class="prose-body mt-5">
             SLAAF has collaborated with <a href="https://by.fambul.com" class="text-leone-700 underline"
-              target="_blank" rel="noopener noreferrer">FAMBUL</a>, the Sierra Leonean apparel label, to
-            produce an official collection for players and supporters.
+              target="_blank" rel="noopener noreferrer">FAMBUL</a> to produce an official collection for
+            players and supporters.
           </p>
           <p class="mt-4 leading-relaxed text-ink-700">
             Every piece is available on presale now, with delivery expected in late 2026.
@@ -115,7 +117,7 @@ const pillars = [
 
         <div>
           {merch.length > 0 && (
-          <ul class="grid grid-cols-3 gap-4 sm:gap-6">
+          <ul class="grid grid-cols-2 gap-4 sm:gap-6">
             {merch.map((product) => (
               <li>
                 <a href="/apparel" class="group block">
@@ -138,7 +140,7 @@ const pillars = [
             ))}
           </ul>
           )}
-          <a href="/apparel" class="btn btn-primary mt-8">See the collection</a>
+          <a href="/apparel" class="btn btn-primary mt-8">See the full collection</a>
         </div>
       </div>
     </div>
