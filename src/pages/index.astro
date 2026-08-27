@@ -37,21 +37,39 @@ const pillars = [
   title="Sierra Leone Authority of American Football"
   description="Sierra Leone Authority of American Football (SLAAF) — the national governing body for tackle and flag football, building the game at home and across the diaspora."
 >
-  <!-- Hero -->
-  <section class="relative overflow-hidden">
-    <div class="container-page pt-12 pb-14 sm:pt-16 sm:pb-16">
-      <h1 class="text-4xl leading-[0.95] sm:text-6xl lg:text-7xl">
+  <!-- Hero. The photo fills the section and the copy sits over it, so the
+       accent switches from atlantic blue to leone green: blue at this weight
+       does not hold up against a dark photograph. -->
+  <section class="relative isolate overflow-hidden bg-ink-950">
+    <Image
+      src={huddle}
+      alt="SLAAF players and coaches in a huddle with hands raised, on a pitch in Freetown"
+      widths={[640, 1024, 1536, 2000]}
+      sizes="100vw"
+      loading="eager"
+      fetchpriority="high"
+      class="absolute inset-0 -z-10 h-full w-full object-cover object-[center_18%]"
+    />
+    {/* Scrim. Below lg the copy spans the full column width, so it needs an
+        even wash; from lg it sits in the left third and a horizontal gradient
+        keeps more of the photograph visible. Measured against the brightest
+        pixels behind the text rather than eyeballed. */}
+    <div class="absolute inset-0 -z-10 bg-ink-950/65 lg:hidden"></div>
+    <div class="absolute inset-0 -z-10 hidden bg-gradient-to-r from-ink-950/90 via-ink-950/72 to-ink-950/35 lg:block"></div>
+    <div class="absolute inset-0 -z-10 bg-gradient-to-t from-ink-950/60 via-transparent to-ink-950/25"></div>
+
+    <div class="container-page flex min-h-[30rem] flex-col justify-end py-16 sm:min-h-[34rem] lg:min-h-[40rem] lg:py-20">
+      <h1 class="max-w-4xl text-4xl leading-[0.95] text-white sm:text-6xl lg:text-7xl">
         American Football
-        <span class="mt-2 block">Has Arrived in <span class="text-atlantic-600">Sierra Leone</span></span>
+        <span class="mt-2 block">Has Arrived in <span class="text-leone-400">Sierra Leone</span></span>
       </h1>
 
-      <p class="prose-body mt-8">
+      <p class="mt-8 max-w-2xl text-lg leading-relaxed text-sand-200">
         Sierra Leone Authority of American Football (SLAAF) is the national
         governing body for American football in Sierra Leone. We are building the
         game from the ground up — in schools and communities at home, and with
         Sierra Leonean talent wherever in the world it is found.
       </p>
-
     </div>
   </section>
 
@@ -85,21 +103,6 @@ const pillars = [
         ))}
       </ul>
     </div>
-  </section>
-
-  <!-- Photographic break. Full bleed, so it sits outside container-page, and
-       the height steps up with the viewport rather than the crop being baked
-       in — a 3:1 strip that works on desktop is a letterbox on a phone.
-       Held at 15% from the top because the subject is the raised hands in the
-       upper third; a centred crop takes the torsos and cuts every head off. -->
-  <section>
-    <Image
-      src={huddle}
-      alt="SLAAF players and coaches in a huddle with hands raised, on a pitch in Freetown"
-      widths={[640, 1024, 1536, 2000]}
-      sizes="100vw"
-      class="h-64 w-full object-cover object-[center_15%] sm:h-80 lg:h-[28rem]"
-    />
   </section>
 
   <!-- What we do -->
