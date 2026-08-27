@@ -1,6 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
+import { Image } from 'astro:assets';
 import { fetchCollection, formatPrice, SHOP } from '../lib/shop';
+import huddle from '../assets/photos/huddle.jpg';
 
 // Fetched at build time, so the homepage stays static and CDN-cached. Prices
 // therefore refresh on deploy rather than on request — /apparel renders on
@@ -83,6 +85,21 @@ const pillars = [
         ))}
       </ul>
     </div>
+  </section>
+
+  <!-- Photographic break. Full bleed, so it sits outside container-page, and
+       the height steps up with the viewport rather than the crop being baked
+       in — a 3:1 strip that works on desktop is a letterbox on a phone.
+       Held at 15% from the top because the subject is the raised hands in the
+       upper third; a centred crop takes the torsos and cuts every head off. -->
+  <section>
+    <Image
+      src={huddle}
+      alt="SLAAF players and coaches in a huddle with hands raised, on a pitch in Freetown"
+      widths={[640, 1024, 1536, 2000]}
+      sizes="100vw"
+      class="h-64 w-full object-cover object-[center_15%] sm:h-80 lg:h-[28rem]"
+    />
   </section>
 
   <!-- What we do -->
