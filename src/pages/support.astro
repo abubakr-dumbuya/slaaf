@@ -40,7 +40,13 @@ const shopUrl = collectionUrl(SHOP);
           <li>
             <a href={product.url} class="group block" target="_blank" rel="noopener noreferrer">
               {product.image && (
-                <div class="overflow-hidden rounded-2xl bg-sand-100">
+                <div class="overflow-hidden rounded-2xl">
+                  {/*
+                    Shopify's product shots have white baked in. Multiplying
+                    against the page ground drops the white out, so the garment
+                    sits on the sand rather than on a white tile. Images that
+                    are already transparent PNGs are unaffected.
+                  */}
                   <img
                     src={product.image.src}
                     alt={product.title}
@@ -48,7 +54,7 @@ const shopUrl = collectionUrl(SHOP);
                     height={product.image.height}
                     loading="lazy"
                     decoding="async"
-                    class="aspect-square w-full object-cover transition duration-300 group-hover:scale-[1.03]"
+                    class="aspect-square w-full object-cover mix-blend-multiply transition duration-300 group-hover:scale-[1.03]"
                   />
                 </div>
               )}
