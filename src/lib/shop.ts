@@ -37,9 +37,20 @@ export const SHOP: ShopConfig = {
 export const collectionUrl = (shop: ShopConfig) =>
   `https://${shop.domain}/collections/${shop.collection}`;
 
-/** Shopify marks presale items in the title; the page says it once instead. */
+/**
+ * Shopify titles repeat context this page already provides: every item is
+ * marked *PRESALE* (stated once above the grid) and prefixed "SLAAF American
+ * Football" (which is the whole site). Stripping both leaves the garment —
+ * "Reversible Bucket Hat" rather than "SLAAF American Football Reversible
+ * Bucket Hat *PRESALE*" — which matters most in a half-width mobile card.
+ */
 export function cleanTitle(title: string): string {
-  return title.replace(/\s*\*?\s*presale\s*\*?\s*/gi, ' ').replace(/\s{2,}/g, ' ').trim();
+  return title
+    .replace(/\s*\*?\s*presale\s*\*?\s*/gi, ' ')
+    .replace(/^\s*SLAAF\s+/i, '')
+    .replace(/^\s*American\s+Football\s+/i, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
 }
 
 export function formatPrice(amount: number, currency: string): string {

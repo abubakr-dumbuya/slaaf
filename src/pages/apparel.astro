@@ -11,11 +11,11 @@ const products = await fetchCollection();
 const shopUrl = collectionUrl(SHOP);
 ---
 <Base
-  title="Support SLAAF"
-  description="Buy from the FAMBUL x SLAAF collection and support the Sierra Leone Authority of American Football — kit, equipment, coaching and travel for players at home and abroad."
+  title="Apparel"
+  description="The FAMBUL x SLAAF collection. Every purchase backs the Sierra Leone Authority of American Football — kit, equipment, coaching and travel for players at home and abroad."
 >
   <PageHeader
-    title="Support SLAAF"
+    title="Apparel"
     lede="Equipment, coaching and travel all cost money. Buying from the collection puts something behind the programme — and puts Salone on your back."
   />
 
@@ -35,7 +35,7 @@ const shopUrl = collectionUrl(SHOP);
     </div>
 
     {products && products.length > 0 && (
-      <ul class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      <ul class="mt-12 grid grid-cols-2 gap-6 sm:gap-8 lg:grid-cols-4">
         {products.map((product) => (
           <li>
             <a href={product.url} class="group block" target="_blank" rel="noopener noreferrer">

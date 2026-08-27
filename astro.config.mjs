@@ -11,7 +11,7 @@ export default defineConfig({
   output: 'static',
   adapter: vercel(),
   // /play was the original route for this page.
-  redirects: { '/play': '/get-involved', '/teams': '/events' },
+  redirects: { '/play': '/get-involved', '/teams': '/events', '/support': '/apparel' },
   integrations: [sitemap()],
   vite: { plugins: [tailwindcss()] },
 });
