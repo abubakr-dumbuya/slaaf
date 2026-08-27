@@ -5,6 +5,8 @@ import logo from '../assets/slaaf-logo.png';
 const year = new Date().getFullYear();
 /** The federation's public address, also where registrations are delivered. */
 const EMAIL = 'info@slaaf.org';
+/** SLAAF's Instagram profile. */
+const INSTAGRAM = 'https://www.instagram.com/salonegridiron/';
 
 const columns = [
   { title: 'Football', links: [
@@ -34,6 +36,22 @@ const columns = [
           Sierra Leone Authority of American Football (SLAAF) — the national
           governing body for tackle and flag football in Sierra Leone.
         </p>
+        <a
+          href={INSTAGRAM}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="mt-4 -ml-2 inline-flex rounded-full p-2 text-ink-300 transition hover:bg-white/10 hover:text-white"
+        >
+          {/* Labelled rather than relying on the glyph: the mark is decorative
+              to a screen reader, so the accessible name lives on the link. */}
+          <span class="sr-only">SLAAF on Instagram</span>
+          <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" />
+            <circle cx="12" cy="12" r="4.2" />
+            <circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none" />
+          </svg>
+        </a>
       </div>
       <div class="grid grid-cols-2 gap-8">
         {columns.map((col) => (
