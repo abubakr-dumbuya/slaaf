@@ -244,6 +244,19 @@ export const COUNTRIES = [
   "Zimbabwe",
 ] as const;
 
+/**
+ * The two countries most registrations come from, lifted to the head of the
+ * dropdowns. COUNTRIES itself stays alphabetical: it is what validation reads,
+ * and sorting has no bearing there.
+ */
+const PINNED = ['Sierra Leone', 'United States'] as const;
+
+/** Display order for the country datalists: pinned first, then alphabetical. */
+export const COUNTRY_OPTIONS: readonly string[] = [
+  ...PINNED,
+  ...COUNTRIES.filter((c) => !PINNED.includes(c as (typeof PINNED)[number])),
+];
+
 const LOOKUP = new Set<string>(COUNTRIES.map((c) => c.toLowerCase()));
 
 /** Case-insensitive match, returning the canonical spelling. */

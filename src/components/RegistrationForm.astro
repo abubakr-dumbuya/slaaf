@@ -1,13 +1,13 @@
 ---
 import { INTERESTS, CONNECTIONS, BACKGROUNDS, SEXES, RESIDENCY, RESIDENCY_NONE, POSITION_GROUPS, MIN_AGE } from '../lib/registration';
-import { COUNTRIES } from '../lib/countries';
+import { COUNTRY_OPTIONS } from '../lib/countries';
 
 const field = 'w-full rounded-lg border-2 border-ink-900/15 bg-white px-4 py-3 text-ink-900 transition placeholder:text-ink-400 focus:border-leone-500 focus:outline-none';
 const label = 'block type-control text-ink-800';
 const err = 'mt-1 text-sm font-medium text-red-700';
 ---
 <datalist id="country-list">
-  {COUNTRIES.map((c) => <option value={c}></option>)}
+  {COUNTRY_OPTIONS.map((c) => <option value={c}></option>)}
 </datalist>
 
 <form id="registration" method="POST" action="/api/register" novalidate class="mt-10 space-y-8">
