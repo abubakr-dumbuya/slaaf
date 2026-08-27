@@ -102,14 +102,14 @@ const bodies = [
       <h2 class="text-3xl sm:text-4xl">Executive Board</h2>
       <p class="mt-4 text-ink-600">Term 2025&ndash;2029</p>
 
-      <ul class="mt-12 grid grid-cols-2 gap-8 lg:grid-cols-4">
+      <ul class="mt-12 grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-4">
         {executive.map((p) => (
           <li><Person name={p.name} role={p.role} photo={portraits[p.name]} /></li>
         ))}
       </ul>
 
       <h2 class="mt-20 text-3xl sm:text-4xl">Advisory Board</h2>
-      <ul class="mt-12 grid grid-cols-2 gap-8 lg:grid-cols-4">
+      <ul class="mt-12 grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-4">
         {advisory.map((name) => (
           <li><Person name={name} photo={portraits[name]} accent="atlantic" /></li>
         ))}
