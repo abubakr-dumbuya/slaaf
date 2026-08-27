@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import PhotoHero from '../components/PhotoHero.astro';
-import huddle from '../assets/photos/huddle.jpg';
+import flagTag from '../assets/photos/flag-tag.jpg';
 import { fetchUpcoming, linkify } from '../lib/calendar';
 
 // Read live so a newly added event appears without a rebuild.
@@ -54,9 +54,9 @@ const zoneLabel = (date: Date, tz: string) =>
   headerOverlay
 >
   <PhotoHero
-    photo={huddle}
-    alt="SLAAF players and coaches in a huddle with hands raised, on a pitch in Freetown"
-    position="center 18%"
+    photo={flagTag}
+    alt="A SLAAF player reaching for an opponent's flag during a flag football game in Freetown"
+    position="center 45%"
   >
     <h1 class="hero-title">Upcoming events</h1>
   </PhotoHero>
