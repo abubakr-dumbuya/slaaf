@@ -181,10 +181,24 @@ export function parseIcs(raw: string): CalendarEvent[] {
   return events;
 }
 
-/** Upcoming events only, soonest first. */
+/**
+ * The instant an event is over, which is what decides whether it is past.
+ *
+ * All-day entries carry an exclusive DTEND, and Google omits it altogether for
+ * a single-day one. Falling back to the start date there would retire the
+ * event at midnight on the morning it happens, so a bare all-day start is
+ * carried to the end of its day instead.
+ */
+function endsAt(event: CalendarEvent): number {
+  if (event.end) return event.end.valueOf();
+  if (event.allDay) return event.start.valueOf() + 24 * 60 * 60 * 1000;
+  return event.start.valueOf();
+}
+
+/** Upcoming events only, soonest first. Anything already over is dropped. */
 export function upcoming(events: CalendarEvent[], now = new Date()): CalendarEvent[] {
   return events
-    .filter((e) => (e.end ?? e.start).valueOf() >= now.valueOf())
+    .filter((e) => endsAt(e) >= now.valueOf())
     .sort((a, b) => a.start.valueOf() - b.start.valueOf());
 }
 
