@@ -97,7 +97,8 @@ export const POST: APIRoute = async ({ request }) => {
   const age = ageOn(d.dateOfBirth);
   const payload: RegistrationPayload = {
     submittedAt: new Date().toISOString(),
-    fullName: d.fullName,
+    firstName: d.firstName,
+    lastName: d.lastName,
     email: d.email,
     phone: d.phone || '',
     country: normaliseCountry(d.country) ?? d.country,

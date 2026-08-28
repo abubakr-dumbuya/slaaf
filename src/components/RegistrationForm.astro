@@ -34,9 +34,15 @@ const err = 'mt-1 text-sm font-medium text-red-700';
 
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       <div>
-        <label class={label} for="fullName">Full name</label>
-        <input class={`${field} mt-2`} id="fullName" name="fullName" type="text" autocomplete="name" required />
-        <p class={err} data-error="fullName" hidden></p>
+        <label class={label} for="firstName">First name</label>
+        <input class={`${field} mt-2`} id="firstName" name="firstName" type="text" autocomplete="given-name" required />
+        <p class={err} data-error="firstName" hidden></p>
+      </div>
+
+      <div>
+        <label class={label} for="lastName">Last name</label>
+        <input class={`${field} mt-2`} id="lastName" name="lastName" type="text" autocomplete="family-name" required />
+        <p class={err} data-error="lastName" hidden></p>
       </div>
       <div>
         <label class={label} for="email">Email</label>

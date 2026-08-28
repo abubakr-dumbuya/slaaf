@@ -89,7 +89,8 @@ export function ageOn(dob: Date, on = new Date()): number {
 
 export const registrationSchema = z
   .object({
-    fullName: z.string({ message: 'Please enter your full name.' }).trim().min(2, 'Please enter your full name.').max(120),
+    firstName: z.string({ message: 'Please enter your first name.' }).trim().min(1, 'Please enter your first name.').max(60),
+    lastName: z.string({ message: 'Please enter your last name.' }).trim().min(1, 'Please enter your last name.').max(60),
     email: z.email('Please enter a valid email address.').max(200),
     phone: z.string().trim().max(40).optional().or(z.literal('')),
     country: z.string({ message: 'Please tell us where you live.' }).trim().min(2, 'Please tell us where you live.').max(80),
@@ -206,7 +207,8 @@ export type Registration = z.infer<typeof registrationSchema>;
 /** Everything the endpoint forwards on for one registration. */
 export interface RegistrationPayload {
   submittedAt: string;
-  fullName: string;
+  firstName: string;
+  lastName: string;
   email: string;
   phone: string;
   country: string;
@@ -229,6 +231,10 @@ export interface RegistrationPayload {
   filmUrl: string;
 }
 
+/** The two name fields as one string, for a subject line or a table row. */
+export const displayName = (p: Pick<RegistrationPayload, 'firstName' | 'lastName'>) =>
+  `${p.firstName} ${p.lastName}`.trim();
+
 /**
  * Subject lines are written to be scannable in a shared inbox: who, where,
  * and — prefixed, because it changes who must be contacted first — whether
@@ -236,7 +242,7 @@ export interface RegistrationPayload {
  */
 export function emailSubject(p: RegistrationPayload): string {
   const prefix = p.isMinor ? '[Under 18] ' : '';
-  return `${prefix}New registration: ${p.fullName} — ${p.country}`;
+  return `${prefix}New registration: ${displayName(p)} — ${p.country}`;
 }
 
 /** ISO timestamps are unreadable in an inbox. */
@@ -256,7 +262,7 @@ const escapeHtml = (v: string) =>
 
 function rows(p: RegistrationPayload): Array<[string, string]> {
   const out: Array<[string, string]> = [
-    ['Name', p.fullName],
+    ['Name', displayName(p)],
     ['Email', p.email],
     ['Phone', p.phone || '—'],
     ['Country', p.country],
