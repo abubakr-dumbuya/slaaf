@@ -16,21 +16,21 @@ const err = 'mt-1 text-sm font-medium text-red-700';
     <label>Website<input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
   </div>
 
-  <div>
-    <span class={label}>I am interested in</span>
-    <div class="mt-3 flex flex-wrap gap-3">
-      {INTERESTS.map((i) => (
-        <label class="flex cursor-pointer items-center gap-2 rounded-full border-2 border-ink-900/15 bg-white px-4 py-2 transition has-[:checked]:border-leone-500 has-[:checked]:bg-leone-50">
-          <input type="checkbox" name="interests" data-playing={INTEREST_PLAYING} value={i} class="accent-leone-600" />
-          <span class="type-control">{i}</span>
-        </label>
-      ))}
-    </div>
-    <p class={err} data-error="interests" hidden></p>
-  </div>
-
   <fieldset class="space-y-6">
     <legend class="type-title text-xl">About you</legend>
+
+    <div>
+      <span class={label}>I am interested in</span>
+      <div class="mt-3 flex flex-wrap gap-3">
+        {INTERESTS.map((i) => (
+          <label class="flex cursor-pointer items-center gap-2 rounded-full border-2 border-ink-900/15 bg-white px-4 py-2 transition has-[:checked]:border-leone-500 has-[:checked]:bg-leone-50">
+            <input type="checkbox" name="interests" data-playing={INTEREST_PLAYING} value={i} class="accent-leone-600" />
+            <span class="type-control">{i}</span>
+          </label>
+        ))}
+      </div>
+      <p class={err} data-error="interests" hidden></p>
+    </div>
 
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       <div>
