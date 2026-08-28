@@ -59,11 +59,18 @@ export const CITIZENSHIP = [
   'No',
 ] as const;
 
+/**
+ * "Both citizen and legal resident" is deliberately absent. Citizenship does
+ * not imply residency — a German citizen living in Freetown is not a German
+ * resident — but the combination is already recoverable: someone who picks
+ * "Citizen of another country" and gives that same country under "Country
+ * where you live" is both. Offering it as a fourth option only made the
+ * choice between it and "Citizen" ambiguous.
+ */
 export const RESIDENCY = [
   'None',
   'Citizen of another country',
   'Legal resident of another country',
-  'Both citizen and legal resident',
 ] as const;
 
 /** The option that means no country outside Sierra Leone applies. */
