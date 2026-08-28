@@ -29,8 +29,8 @@ const fmt = (timeZone: string, options: Intl.DateTimeFormatOptions) =>
 const dayFmt = (tz: string) => fmt(tz, { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' });
 const timeFmt = (tz: string) => fmt(tz, { hour: '2-digit', minute: '2-digit' });
 const zoneFmt = (tz: string) => fmt(tz, { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' });
-const monthFmt = (tz: string) => fmt(tz, { month: 'short' });
-const dateFmt = (tz: string) => fmt(tz, { day: 'numeric' });
+/** The badge reads as one line: "1 AUG 2027", uppercased by .type-label. */
+const badgeFmt = (tz: string) => fmt(tz, { day: 'numeric', month: 'short', year: 'numeric' });
 
 const DAY_MS = 86_400_000;
 
@@ -76,14 +76,17 @@ const zoneLabel = (date: Date, tz: string) =>
         {events.map((event) => (
           <li class="bg-sand-100 p-6 sm:p-8">
             <div class="flex flex-col gap-6 sm:flex-row sm:items-start">
+              {/* Width follows the text rather than being fixed: with the year
+                  on the same line the old 6rem chip could not hold it. */}
               <div
-                class="flex shrink-0 flex-col items-center justify-center rounded-xl bg-ink-950 px-5 py-4 text-white sm:w-24"
+                class="flex shrink-0 items-center justify-center self-start rounded-xl bg-ink-950 px-5 py-3 text-white"
                 data-badge
                 data-start={event.start.toISOString()}
                 data-all-day={String(event.allDay)}
               >
-                <span class="type-label text-leone-400" data-month>{monthFmt(zoneOf(event)).format(event.start)}</span>
-                <span class="type-numeral text-3xl leading-none" data-day>{dateFmt(zoneOf(event)).format(event.start)}</span>
+                <span class="type-label whitespace-nowrap" data-badge-date>
+                  {badgeFmt(zoneOf(event)).format(event.start)}
+                </span>
               </div>
 
               <div class="min-w-0">
@@ -183,8 +186,7 @@ const zoneLabel = (date: Date, tz: string) =>
   const zoneFmt = new Intl.DateTimeFormat('en-GB', {
     hour: '2-digit', minute: '2-digit', timeZoneName: 'short',
   });
-  const monthFmt = new Intl.DateTimeFormat('en-GB', { month: 'short' });
-  const dateFmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric' });
+  const badgeFmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
   const zoneOf = (d: Date) =>
     zoneFmt.formatToParts(d).find((p) => p.type === 'timeZoneName')?.value ?? '';
@@ -193,8 +195,7 @@ const zoneLabel = (date: Date, tz: string) =>
     if (el.dataset.allDay === 'true') return;
     const start = new Date(el.dataset.start!);
     if (Number.isNaN(start.valueOf())) return;
-    el.querySelector<HTMLElement>('[data-month]')!.textContent = monthFmt.format(start);
-    el.querySelector<HTMLElement>('[data-day]')!.textContent = dateFmt.format(start);
+    el.querySelector<HTMLElement>('[data-badge-date]')!.textContent = badgeFmt.format(start);
   });
 
   const DAY_MS = 86_400_000;
