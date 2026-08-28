@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import PhotoHero from '../components/PhotoHero.astro';
 import { fetchCollection, formatPrice, SHOP } from '../lib/shop';
+import { INTERESTS } from '../lib/registration';
 import huddle from '../assets/photos/huddle.jpg';
 
 // Fetched at build time, so the homepage stays static and CDN-cached. Prices
@@ -11,11 +12,16 @@ const FEATURED = ['slaaf-american-football-hoodie', 'slaaf-american-football-sle
 const all = (await fetchCollection()) ?? [];
 const merch = FEATURED.map((handle) => all.find((p) => p.handle === handle)).filter((p) => p !== undefined);
 
-const ways = [
-  { title: 'Play', body: 'Combines, trials and national squads — flag and tackle, men and women.' },
-  { title: 'Coach', body: 'Get certified and lead training in schools, clubs and communities.' },
-  { title: 'Officiate', body: 'Train as a referee or official and run the game on match day.' },
-  { title: 'Volunteer', body: 'Events, logistics, media, kit — everything that happens off the field.' },
+/**
+ * Each card carries the interest its Register button pre-selects on the form.
+ * Typed against INTERESTS so a renamed option fails the type check here rather
+ * than silently sending a value the form cannot match.
+ */
+const ways: Array<{ title: string; interest: (typeof INTERESTS)[number]; body: string }> = [
+  { title: 'Play', interest: 'Playing', body: 'Combines, trials and national squads — flag and tackle, men and women.' },
+  { title: 'Coach', interest: 'Coaching', body: 'Get certified and lead training in schools, clubs and communities.' },
+  { title: 'Officiate', interest: 'Officiating', body: 'Train as a referee or official and run the game on match day.' },
+  { title: 'Volunteer', interest: 'Volunteering', body: 'Events, logistics, media, kit — everything that happens off the field.' },
 ];
 
 const pillars = [
@@ -62,7 +68,7 @@ const pillars = [
         {ways.map((way) => (
           <li>
             <a
-              href="/get-involved"
+              href={`/get-involved?interest=${encodeURIComponent(way.interest)}#registration`}
               class="group flex h-full flex-col rounded-2xl border-x border-b border-ink-900/10 border-t-4 border-t-leone-500 bg-sand-50 p-6 transition hover:border-t-atlantic-600 hover:bg-white"
             >
               <h3 class="text-xl transition group-hover:text-atlantic-600">{way.title}</h3>

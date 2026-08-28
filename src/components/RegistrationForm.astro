@@ -10,7 +10,7 @@ const err = 'mt-1 text-sm font-medium text-red-700';
   {COUNTRY_OPTIONS.map((c) => <option value={c}></option>)}
 </datalist>
 
-<form id="registration" method="POST" action="/api/register" novalidate class="mt-10 space-y-8">
+<form id="registration" method="POST" action="/api/register" novalidate class="mt-10 scroll-mt-28 space-y-8">
   <!-- Honeypot: hidden from people, irresistible to bots. -->
   <div class="absolute left-[-9999px]" aria-hidden="true">
     <label>Website<input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
@@ -364,6 +364,18 @@ const err = 'mt-1 text-sm font-medium text-red-700';
     };
     interests.forEach((i) => i.addEventListener('change', syncPosition));
     syncPosition();
+
+    // The homepage cards link here with the interest they represent. Applied
+    // after the listeners above are attached, so the change event it fires
+    // reaches them and reveals the position question when relevant.
+    const wanted = new URLSearchParams(location.search).get('interest');
+    if (wanted) {
+      const box = interests.find((i) => i.value === wanted);
+      if (box) {
+        box.checked = true;
+        box.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    }
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
