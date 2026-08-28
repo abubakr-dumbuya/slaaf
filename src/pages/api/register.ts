@@ -111,6 +111,7 @@ export const POST: APIRoute = async ({ request }) => {
     guardianPhone: d.guardianPhone || '',
     guardianEmail: d.guardianEmail || '',
     connection: d.connection,
+    citizenship: d.citizenship,
     residency: d.residency,
     residencyCountry: d.residencyCountry ? (normaliseCountry(d.residencyCountry) ?? d.residencyCountry) : '',
     enrolment: d.enrolment,

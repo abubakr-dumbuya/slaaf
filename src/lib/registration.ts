@@ -41,11 +41,29 @@ export const CONNECTIONS = [
  */
 export const SEXES = ['Male', 'Female'] as const;
 
+/**
+ * Citizenship and residency are two questions, not one.
+ *
+ * They used to be a single field whose options all began "Sierra Leone only"
+ * or "citizen of another country" — which quietly assumed every applicant
+ * already holds Sierra Leone citizenship. Two common cases do not fit that: a
+ * player with Sierra Leonean parents who has never held a passport, and a
+ * player who is a citizen of another country and not of Sierra Leone at all.
+ * Asking separately also records the third case worth knowing about — someone
+ * eligible for citizenship who has not claimed it — which is actionable rather
+ * than a dead end.
+ */
+export const CITIZENSHIP = [
+  'Yes',
+  'Not yet — I believe I am eligible',
+  'No',
+] as const;
+
 export const RESIDENCY = [
-  'No — Sierra Leone only',
-  'Yes — citizen of another country',
-  'Yes — legal resident of another country',
-  'Yes — both citizen and legal resident',
+  'None',
+  'Citizen of another country',
+  'Legal resident of another country',
+  'Both citizen and legal resident',
 ] as const;
 
 /** The option that means no country outside Sierra Leone applies. */
@@ -97,6 +115,7 @@ export const registrationSchema = z
     dateOfBirth: z.coerce.date({ message: 'Please enter your date of birth.' }),
     sex: z.enum(SEXES, { message: 'Please choose one option.' }),
     connection: z.enum(CONNECTIONS, { message: 'Please choose one option.' }),
+    citizenship: z.enum(CITIZENSHIP, { message: 'Please choose one option.' }),
     residency: z.enum(RESIDENCY, { message: 'Please choose one option.' }),
     residencyCountry: z.string().trim().max(80).optional().or(z.literal('')),
     enrolment: z.enum(ENROLMENT, { message: 'Please choose one option.' }),
@@ -220,6 +239,7 @@ export interface RegistrationPayload {
   guardianPhone: string;
   guardianEmail: string;
   connection: string;
+  citizenship: string;
   residency: string;
   residencyCountry: string;
   enrolment: string;
@@ -278,7 +298,8 @@ function rows(p: RegistrationPayload): Array<[string, string]> {
   }
   out.push(
     ['Connection to Sierra Leone', p.connection],
-    ['Citizenship / residency outside SL', p.residencyCountry ? `${p.residency} (${p.residencyCountry})` : p.residency],
+    ['Sierra Leone citizen', p.citizenship],
+    ['Elsewhere', p.residencyCountry ? `${p.residency} (${p.residencyCountry})` : p.residency],
     ['In education', p.schoolSport ? `${p.enrolment} (plays for a school team: ${p.schoolSport})` : p.enrolment],
     ['Sporting background', p.background],
     ['Interested in', p.interests.join(', ')],
