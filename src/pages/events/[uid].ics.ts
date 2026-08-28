@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { env } from '../../lib/env';
 import { fetchUpcoming, toIcs, slugify } from '../../lib/calendar';
 
 export const prerender = false;
@@ -10,8 +11,8 @@ export const GET: APIRoute = async ({ params }) => {
   const uid = decodeURIComponent(params.uid ?? '');
   if (!uid) return new Response('Not found', { status: 404 });
 
-  const calendarId = import.meta.env.GOOGLE_CALENDAR_ID || DEFAULT_CALENDAR_ID;
-  const events = await fetchUpcoming(calendarId, import.meta.env.CALENDAR_ICS_URL);
+  const calendarId = env('GOOGLE_CALENDAR_ID') || DEFAULT_CALENDAR_ID;
+  const events = await fetchUpcoming(calendarId, env('CALENDAR_ICS_URL'));
   if (!events) return new Response('The calendar could not be read.', { status: 502 });
 
   const event = events.find((e) => e.uid === uid);

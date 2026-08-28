@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import PhotoHero from '../components/PhotoHero.astro';
 import flagTag from '../assets/photos/flag-tag.jpg';
 import { fetchUpcoming, linkify } from '../lib/calendar';
+import { env } from '../lib/env';
 
 // Read live so a newly added event appears without a rebuild.
 export const prerender = false;
@@ -12,8 +13,8 @@ export const prerender = false;
 const DEFAULT_CALENDAR_ID =
   'd70c6bb1623ca7cce65ebaa41ac643e3ebed78265bae6e9a7618684894aa6e86@group.calendar.google.com';
 
-const calendarId = import.meta.env.GOOGLE_CALENDAR_ID || DEFAULT_CALENDAR_ID;
-const feedUrl = import.meta.env.CALENDAR_ICS_URL;
+const calendarId = env('GOOGLE_CALENDAR_ID') || DEFAULT_CALENDAR_ID;
+const feedUrl = env('CALENDAR_ICS_URL');
 const events = calendarId ? await fetchUpcoming(calendarId, feedUrl) : null;
 
 // Events span Freetown, Europe and the US, so each is shown in the zone it was

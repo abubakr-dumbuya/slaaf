@@ -9,6 +9,7 @@ import {
   type RegistrationPayload,
 } from '../../lib/registration';
 import { normaliseCountry } from '../../lib/countries';
+import { env } from '../../lib/env';
 
 /** Registrations go here unless overridden. */
 const DEFAULT_NOTIFY_EMAIL = 'info@slaaf.org';
@@ -28,7 +29,7 @@ export const prerender = false;
  *   RESEND_API_KEY     + SLAAF_NOTIFY_EMAIL to deliver by email
  */
 async function deliver(payload: RegistrationPayload): Promise<boolean> {
-  const webhook = import.meta.env.SLAAF_WEBHOOK_URL;
+  const webhook = env('SLAAF_WEBHOOK_URL');
   if (webhook) {
     const res = await fetch(webhook, {
       method: 'POST',
@@ -39,14 +40,14 @@ async function deliver(payload: RegistrationPayload): Promise<boolean> {
     return true;
   }
 
-  const key = import.meta.env.RESEND_API_KEY;
+  const key = env('RESEND_API_KEY');
   if (key) {
-    const to = import.meta.env.SLAAF_NOTIFY_EMAIL || DEFAULT_NOTIFY_EMAIL;
+    const to = env('SLAAF_NOTIFY_EMAIL') || DEFAULT_NOTIFY_EMAIL;
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json' },
       body: JSON.stringify({
-        from: import.meta.env.SLAAF_FROM_EMAIL || DEFAULT_FROM,
+        from: env('SLAAF_FROM_EMAIL') || DEFAULT_FROM,
         to: [to],
         // So the board can answer the applicant straight from the inbox.
         reply_to: payload.email,
