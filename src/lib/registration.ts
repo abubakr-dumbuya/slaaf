@@ -73,6 +73,19 @@ export const RESIDENCY = [
   'Legal resident of another country',
 ] as const;
 
+/**
+ * The country field asks a different question depending on the answer above,
+ * so its label is keyed to the option rather than left as a vague "Which
+ * country?". The placeholder carries one too, so the client can set the label
+ * from the selected option without a special case for "nothing chosen yet".
+ */
+export const RESIDENCY_COUNTRY_LABELS: Record<string, string> = {
+  '': 'Which country?',
+  None: 'Which country?',
+  'Citizen of another country': 'What country are you a citizen of?',
+  'Legal resident of another country': 'Which country do you have residency in?',
+};
+
 /** The option that means no country outside Sierra Leone applies. */
 export const RESIDENCY_NONE = RESIDENCY[0];
 
@@ -82,6 +95,14 @@ export const RESIDENCY_NONE = RESIDENCY[0];
  * invitation has to be routed through.
  */
 export const ENROLMENT = ['High school', 'College or university', 'No'] as const;
+
+/** The follow-up names the institution the applicant just chose. */
+export const SCHOOL_SPORT_LABELS: Record<string, string> = {
+  '': 'Do you play a sport for your school or college team?',
+  No: 'Do you play a sport for your school or college team?',
+  'High school': 'Do you play a sport for your high school team?',
+  'College or university': 'Do you play a sport for your college team?',
+};
 
 /** The option that means no school or college applies. */
 export const ENROLMENT_NONE = ENROLMENT[2];

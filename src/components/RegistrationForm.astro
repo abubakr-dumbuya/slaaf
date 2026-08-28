@@ -1,5 +1,5 @@
 ---
-import { INTERESTS, INTEREST_PLAYING, CITIZENSHIP, CONNECTIONS, BACKGROUNDS, SEXES, RESIDENCY, RESIDENCY_NONE, ENROLMENT, ENROLMENT_NONE, SCHOOL_SPORT, POSITION_GROUPS, MIN_AGE } from '../lib/registration';
+import { INTERESTS, INTEREST_PLAYING, CITIZENSHIP, RESIDENCY_COUNTRY_LABELS, SCHOOL_SPORT_LABELS, CONNECTIONS, BACKGROUNDS, SEXES, RESIDENCY, RESIDENCY_NONE, ENROLMENT, ENROLMENT_NONE, SCHOOL_SPORT, POSITION_GROUPS, MIN_AGE } from '../lib/registration';
 import { COUNTRY_OPTIONS } from '../lib/countries';
 
 const field = 'w-full rounded-lg border-2 border-ink-900/15 bg-white px-4 py-3 text-ink-900 transition placeholder:text-ink-400 focus:border-leone-500 focus:outline-none';
@@ -129,16 +129,18 @@ const err = 'mt-1 text-sm font-medium text-red-700';
       </div>
 
       <div>
-        <label class={label} for="residency">Citizenship or residency elsewhere</label>
+        <label class={label} for="residency">Citizenship or residency outside of Sierra Leone</label>
         <select class={`${field} mt-2`} id="residency" name="residency" required data-none={RESIDENCY_NONE}>
-          <option value="">Choose one…</option>
-          {RESIDENCY.map((r) => <option value={r}>{r}</option>)}
+          <option value="" data-option-label={RESIDENCY_COUNTRY_LABELS['']}>Choose one…</option>
+          {RESIDENCY.map((r) => (
+            <option value={r} data-option-label={RESIDENCY_COUNTRY_LABELS[r]}>{r}</option>
+          ))}
         </select>
         <p class={err} data-error="residency" hidden></p>
       </div>
 
       <div id="residency-country-wrap" class="opacity-50 transition-opacity">
-        <label class={label} for="residencyCountry">Which country?</label>
+        <label class={label} for="residencyCountry" id="residencyCountry-label">{RESIDENCY_COUNTRY_LABELS['']}</label>
         <input
           class={`${field} mt-2 disabled:cursor-not-allowed disabled:border-ink-900/10 disabled:bg-sand-100 disabled:text-ink-400`}
           id="residencyCountry" name="residencyCountry" type="text" list="country-list"
@@ -150,14 +152,14 @@ const err = 'mt-1 text-sm font-medium text-red-700';
       <div>
         <label class={label} for="enrolment">Are you in high school or college?</label>
         <select class={`${field} mt-2`} id="enrolment" name="enrolment" required data-none={ENROLMENT_NONE}>
-          <option value="">Choose one…</option>
-          {ENROLMENT.map((e) => <option value={e}>{e}</option>)}
+          <option value="" data-option-label={SCHOOL_SPORT_LABELS['']}>Choose one…</option>
+          {ENROLMENT.map((e) => <option value={e} data-option-label={SCHOOL_SPORT_LABELS[e]}>{e}</option>)}
         </select>
         <p class={err} data-error="enrolment" hidden></p>
       </div>
 
       <div id="school-sport-wrap" class="opacity-50 transition-opacity">
-        <label class={label} for="schoolSport">Do you play a sport for your school or college team?</label>
+        <label class={label} for="schoolSport" id="schoolSport-label">{SCHOOL_SPORT_LABELS['']}</label>
         <select
           class={`${field} mt-2 disabled:cursor-not-allowed disabled:border-ink-900/10 disabled:bg-sand-100 disabled:text-ink-400`}
           id="schoolSport" name="schoolSport" disabled
@@ -339,10 +341,18 @@ const err = 'mt-1 text-sm font-medium text-red-700';
     const residencyWrap = document.getElementById('residency-country-wrap') as HTMLElement;
     const NONE = residency.dataset.none;
     const residencyCountry = form.querySelector<HTMLInputElement>('#residencyCountry')!;
+    /** Rewrites a dependent field's label to match the option just chosen. */
+    const syncLabel = (select: HTMLSelectElement, targetId: string) => {
+      const wording = select.selectedOptions[0]?.dataset.optionLabel;
+      const target = document.getElementById(targetId);
+      if (target && wording) target.textContent = wording;
+    };
     const syncResidency = () => {
       const applies = residency.value !== '' && residency.value !== NONE;
       residencyCountry.disabled = !applies;
       residencyWrap.classList.toggle('opacity-50', !applies);
+      // Every option carries its own wording, so no fallback is needed here.
+      syncLabel(residency, 'residencyCountry-label');
       // Do not leave a stale country behind when the answer changes back.
       if (!applies) residencyCountry.value = '';
     };
@@ -360,6 +370,7 @@ const err = 'mt-1 text-sm font-medium text-red-700';
       schoolSport.disabled = !applies;
       schoolSport.required = applies;
       schoolSportWrap.classList.toggle('opacity-50', !applies);
+      syncLabel(enrolment, 'schoolSport-label');
       if (!applies) schoolSport.value = '';
     };
     enrolment.addEventListener('change', syncEnrolment);
