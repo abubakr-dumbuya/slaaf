@@ -23,6 +23,9 @@ export const POSITIONS = POSITION_GROUPS.flatMap((g) => g.options as readonly st
 
 export const INTERESTS = ['Playing', 'Coaching', 'Officiating', 'Volunteering'] as const;
 
+/** The interest that unlocks the position question. */
+export const INTEREST_PLAYING = INTERESTS[0];
+
 export const CONNECTIONS = [
   'Born in Sierra Leone',
   'Parent born in Sierra Leone',
@@ -183,7 +186,13 @@ export const registrationSchema = z
         message: 'Please choose a country from the list.',
       });
     }
-    if (data.position && !POSITIONS.includes(data.position)) {
+    if (data.position && !data.interests.includes(INTEREST_PLAYING)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['position'],
+        message: 'Positions are only for people interested in playing.',
+      });
+    } else if (data.position && !POSITIONS.includes(data.position)) {
       ctx.addIssue({
         code: 'custom',
         path: ['position'],
